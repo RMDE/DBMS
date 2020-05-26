@@ -31,14 +31,12 @@ manager: id,name,email,phone,birthday,password
 - show courses: course-id,course-name,type,credit,schedule,[图形化课表(冲突显示)]
 - show exam: 显示未有成绩课程的考试
 	     course_id,course_name,exam_type(考试，考核),exam_date,exam_room
-- show grade: 显示已有成绩课程
-	      course_id,course_name,course_type,credit,grade
+- show grade: course-name,credit,type,grade
+	      绩点 -- 必修平均绩点，所有平均绩点，grade*credit/sum(credit)，显示在顶部
 - choose courses: 搜索框 -- course-id,course-name,teacher,college
 		  显示课程 -- course_id,course_name,teacher,type,credit,college,schedule,exam_type
 		  选课按钮 -- 弹框确定 -- 更新数据库
 - charge: 电费 -- 显示的是剩余可用电量，数据库存的是剩余水电费，可充值，1.5元/度，充值后可用电量刷新
-- show grade: course-name,credit,type,grade
-	      绩点 -- 必修平均绩点，所有平均绩点，grade*credit/sum(credit)，显示在顶部
 - search teacher: 搜索框 -- teacher-name
 		  teacher_name,teacher_email,teacher_phone,college,[course]
 				可能进一步实现phone或email的copy功能
