@@ -5,7 +5,7 @@ student: id,name,sex,class,profession,college,room,phone,birthday,password
 
 class: id,college,teacher,monitor
 
-teacher: id,name,email,phone,college,birthday,salary,password
+teacher: id,name,sex,email,phone,college,birthday,salary,password
 
 course: id,name,type,credit(学分),teacher,schedule,[class(教学班，set)],exam-type,exam-date,exam-room
 
@@ -13,17 +13,17 @@ college: id,name,dean(院长),[专业]
 
 choose: student,class,time,score
 
-worker: id,name,phone,birthday,salary,password
+worker: id,name,sex,phone,birthday,salary,password
 
 department: id,area(区域),manager,capacity(容纳人数)
 
-room: id,department,[student],charge(可用电费)
+room: id,department,people,charge(可用电费)
 
-book: id,name,type,year,value,sum,avaible
+book: id,name,type,author,year,sum,avaible
 
 borrow: book(book-id),person,time,deadline,fee(欠费) [还书提醒(弹窗)]
 
-manager: id,name,email,phone,birthday,password
+manager: id,name,sex,email,phone,birthday,password
 
 #### 功能
 1. student:

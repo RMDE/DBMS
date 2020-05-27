@@ -58,13 +58,13 @@ class mydb(object):
                                      "Thu-8:00~9:45","Thu-10:15~12:00","Thu-14:00~15:45","Thu-16:15~18:00",
                                      "Fri-8:00~9:45","Fri-10:15~12:00","Fri-14:00~15:45","Fri-16:15~18:00"),
                         exam_type enum("考试","考查"),
-                        exam_date date,
+                        exam_date datetime,
                         exam_room varchar(20),
                         foreign key(teacher) references teacher(id))'''
         choose = '''create table choose(
                         student varchar(20),
                         course varchar(20),
-                        time date not null,
+                        time datetime not null,
                         score int,
                         foreign key(student) references student(id),
                         foreign key(course) references course(id),
@@ -86,6 +86,7 @@ class mydb(object):
         room = '''create table room(
                         id varchar(20) primary key,
                         department varchar(20) not null,
+                        people int default 0,
                         charge dec(8,2),
                         foreign key(department) references department(id))'''
         students = '''create table student(
@@ -108,8 +109,8 @@ class mydb(object):
                         id varchar(20) primary key,
                         name varchar(20) not null,
                         type varchar(20),
+                        author varchar(20),
                         year int,
-                        value dec(8,2),
                         sum int not null,
                         avaible int not null,
                         foreign key(type) references college(id))'''
@@ -148,64 +149,7 @@ class mydb(object):
             print("create fails!{}".format(e))
             self.database.rollback()
 
-    # 创建新的学生
-    def create_student(self,ID,name,clas,professtion,college,room,password,sex=None,phone=None,birthday=None):
-        config = '''inset into student(
-            id,name,sex,class,profession,college,room,phone,birthday,password) 
-            values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
-        args = (ID,name,sex,clas,profession,college,room,phone,birthday,password)
-        try:
-            self.cursor.execute(config,args)
-            self.database.commit()
-            flag = True
-        except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
-            self.database.rollback()
-            flag = False
-        return flag
-
-    # 创建新的学院
-    def create_college(self,ID,name,profession,dean=None):
-        config = '''insert into college(ID,name,profession,dean)
-                    values(%s,%s,%s,%s)'''
-        args = (ID,name,profession,dean)
-        try:
-            res = self.cursor.execute(config,args)
-            self.database.commit()
-            flag = True
-        except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
-            self.database.rollback()
-            flag = False
-        return flag
     
-    # 创建新的管理员
-    def create_manager(self,ID,name,password,sex= None,email=None,phone=None,birthday=None):
-        a = '''insert into manager(id,name,password,sex,email,phone,birthday) values(%s,%s,%s,%s,%s,%s,%s)'''
-        b=(ID,name,password,sex,email,phone,birthday)
-        try:
-            self.cursor.execute(a,b)
-            self.database.commit()
-            flag = True
-        except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
-            self.database.rollback()
-            flag = False
-        return flag
-    
-    # 创建新的教师
-    def create_teacher(self,ID,name,password,sex=None,email=None,phone=None,college=None,birthday=None):
-        config = '''insert into teacher(id,name,password,sex,email,phone,college,birthday) values(%s,%s,%s,%s,%s,%s,%s,%s)'''
-        args = (ID,name,password,sex,email,phone,college,birthday)
-        try:
-            res = self.cursor.execute(config,args)
-            self.database.commit()
-            flag = True
-        except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
-            self.database.rollback()
-            flag = False
-        return flag
     # 插入初始数据
     def init_data(self):
         config='''insert into college(id,name,profession) values(%s,%s,%s)'''
@@ -242,6 +186,9 @@ class mydb(object):
         self.cursor.execute(config,("T140001","周芙蓉","zfr@xxx.edu.cn","1978324733","14","1982-3-23",10000,"123456","female"))
         self.cursor.execute(config,("T150001","Tony","tony@xxx.edu.cn","1287233789","15","1986-4-19",10000,"123456","male"))
         self.cursor.execute(config,("T160001","陈秉","cb@xxx.edu.cn","1847343298","16","1982-2-5",10000,"123456","male"))
+        self.cursor.execute(config,("T160002","何峰","hf@xxx.edu.cn","1847353228","16","1982-7-19",8000,"123456","male"))
+        self.cursor.execute(config,("T160003","陈妍","cy@xxx.edu.cn","1847378932","16","1979-8-9",8000,"123456","female"))
+        self.cursor.execute(config,("T160004","张而维","zew@xxx.edu.cn","1847926378","16","1990-10-28",7000,"123456","male"))
         config = '''update college set dean=%s where id=%s'''
         self.cursor.execute(config,("T010001","1"))
         self.cursor.execute(config,("T020001","2"))
@@ -274,21 +221,21 @@ class mydb(object):
         self.cursor.execute(config,("W0012","周侠义","male","182472652864","1966-9-12",2000,"123456"))
 
         config = '''insert into department(id,area,manager,capacity) values(%s,%s,%s,%s)'''
-        self.cursor.execute(config,("1","东区","W0001",150))
-        self.cursor.execute(config,("2","东区","W0001",150))
-        self.cursor.execute(config,("3","东区","W0001",150))
-        self.cursor.execute(config,("4","东区","W0001",150))
-        self.cursor.execute(config,("5","东区","W0001",150))
-        self.cursor.execute(config,("6","东区","W0002",150))
-        self.cursor.execute(config,("7","东区","W0002",150))
-        self.cursor.execute(config,("8","东区","W0002",150))
-        self.cursor.execute(config,("9","东区","W0002",150))
-        self.cursor.execute(config,("10","东区","W0002",150))
-        self.cursor.execute(config,("11","东区","W0003",150))
-        self.cursor.execute(config,("12","东区","W0003",150))
-        self.cursor.execute(config,("13","东区","W0003",150))
-        self.cursor.execute(config,("14","东区","W0003",150))
-        self.cursor.execute(config,("15","东区","W0003",150))
+        self.cursor.execute(config,("1","东区","W0001",100))
+        self.cursor.execute(config,("2","东区","W0001",100))
+        self.cursor.execute(config,("3","东区","W0001",100))
+        self.cursor.execute(config,("4","东区","W0001",100))
+        self.cursor.execute(config,("5","东区","W0001",100))
+        self.cursor.execute(config,("6","东区","W0002",100))
+        self.cursor.execute(config,("7","东区","W0002",100))
+        self.cursor.execute(config,("8","东区","W0002",100))
+        self.cursor.execute(config,("9","东区","W0002",100))
+        self.cursor.execute(config,("10","东区","W0002",100))
+        self.cursor.execute(config,("11","东区","W0003",100))
+        self.cursor.execute(config,("12","东区","W0003",100))
+        self.cursor.execute(config,("13","东区","W0003",100))
+        self.cursor.execute(config,("14","东区","W0003",100))
+        self.cursor.execute(config,("15","东区","W0003",100))
         self.cursor.execute(config,("16","西区","W0004",120))
         self.cursor.execute(config,("17","西区","W0004",120))
         self.cursor.execute(config,("18","西区","W0004",120))
@@ -334,4 +281,150 @@ class mydb(object):
         self.cursor.execute(config,("58","北区","W0012",160))
         self.cursor.execute(config,("59","北区","W0012",160))
         self.cursor.execute(config,("60","北区","W0012",160))
+        config = '''insert into room(id,department,people,charge) values(%s,%s,%s,%s)'''
+        for i in range(14):
+            for j in range(5):
+                for k in range(5):
+                    room = str(i+1)+"-"+str(j)+"0"+str(k)
+                    self.cursor.execute(config,(room,str(i+1),0,0))
+        for i in range(14):
+            for j in range(6):
+                for k in range(5):
+                    room = str(i+16)+"-"+str(j)+"0"+str(k)
+                    self.cursor.execute(config,(room,str(i+16),0,0))
+        for i in range(15):
+            for j in range(7):
+                for k in range(5):
+                    room = str(i+31)+"-"+str(j)+"0"+str(k)
+                    self.cursor.execute(config,(room,str(i+31),0,0))
+        for i in range(15):
+            for j in range(8):
+                for k in range(5):
+                    room = str(i+46)+"-"+str(j)+"0"+str(k)
+                    self.cursor.execute(config,(room,str(i+46),0,0))
+        config = '''update room set people=1 where id="9-101"'''
+        self.cursor.execute(config)
+        config = '''update room set charge=20.53 where id="9-101"'''
+        self.cursor.execute(config)
+        config = '''insert into manager(id,name,sex,email,phone,birthday,password) values("M0001","王威风","male","wwf@xxx.man.cn","184325576534","1989-3-7","123456")'''
+        self.cursor.execute(config)
+        config = '''insert into class(id,college,teacher) values(%s,%s,%s)'''
+        for i in range(9):
+            cla = "0"+str(i+1)+"201"
+            self.cursor.execute(config,(cla,str(i+1),"T0"+str(i+1)+"0001"))
+        for i in range(7):
+            cla = str(i+10)+"201"
+            self.cursor.execute(config,(cla,str(i+10),"T"+str(i+10)+"0001"))
+        config = '''insert into student(id,name,sex,class,profession,college,room,phone,birthday,password) values("S1620101","叶曦","female","16201","信息安全","16","9-101","15628472828","1999-7-30","123456")'''
+        self.cursor.execute(config)
+        config = '''update class set monitor="S1620101" where id="16201"'''
+        self.cursor.execute(config)
+        config = '''insert into course(id,name,type,credit,teacher,schedule,exam_type) values(%s,%s,%s,%s,%s,%s,%s)'''
+        self.cursor.execute(config,("1","高等数学","必修",5.5,"T080001","Mon-10:15~12:00,Wed-10:15~12:00,Fri-8:00~9:45","考试"))
+        self.cursor.execute(config,("2","网络安全","必修",2,"T160001","Tue-8:00~9:45,Fri-8:00~9:45","考试"))
+        self.cursor.execute(config,("3","嵌入式","专业选修",2,"T160002","Thu-10:15~12:00","考查"))
+        self.cursor.execute(config,("4","美术鉴赏","文化素质",1.5,"T110001","Fri-14:00~15:45","考查"))
+        self.cursor.execute(config,("5","操作系统实践","实践拓展",2.5,"T160001","Tue-8:00~9:45,Thu-8:00~9:45","考查"))
+        self.cursor.execute(config,("6","英语","必修",1.5,"T120001","Wed-16:15~18:00","考试"))
+        self.cursor.execute(config,("7","操作系统","必修",3.5,"T160002","Mon-14:00~15:45,Wed-8:00~9:45","考试"))
+        self.cursor.execute(config,("8","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
+        self.cursor.execute('''update course set exam_date="2000-6-7 8:00:00" where id="3"''')
+        self.cursor.execute('''update course set exam_room="2201" where id="3"''')
+        config = '''insert into choose(student,course,time) values(%s,%s,%s)'''
+        self.cursor.execute(config,("S1620101","1","2020-1-10 9:23:45"))
+        self.cursor.execute(config,("S1620101","2","2020-1-12 15:02:12"))
+        self.cursor.execute(config,("S1620101","3","2020-1-10 9:24:07"))
+        self.cursor.execute(config,("S1620101","4","2020-1-10 9:24:29"))
+        self.cursor.execute(config,("S1620101","5","2020-1-10 10:38:22"))
+        self.cursor.execute(config,("S1620101","6","2020-2-9 12:21:05"))
+        self.cursor.execute(config,("S1620101","7","2020-2-9 12:21:24"))
+        self.cursor.execute(config,("S1620101","8","2020-4-5 15:03:33"))
+        config = '''insert into book(id,name,author,type,year,sum,avaible) values(%s,%s,%s,%s,%s,%s,%s)'''
+        self.cursor.execute(config,("1","高等数学","王五","8",2017,8,6))
+        self.cursor.execute(config,("2","线性代数","张三","8",2017,5,4))
+        self.cursor.execute(config,("3","数据结构","刘德峰","16",2016,12,10))
+        self.cursor.execute(config,("4","操作系统","周赋好","16",2018,8,6))
+        self.cursor.execute(config,("5","嵌入式","张梁","16",2019,6,5))
+        config = '''insert into borrow(book,person,time,deadline) values(%s,%s,%s,%s)'''
+        self.cursor.execute(config,("1","T080001","2020-4-1","2020-8-1"))
+        self.cursor.execute(config,("2","T080001","2020-4-1","2020-8-1"))
+        self.cursor.execute(config,("1","S1620101","2020-3-14","2020-5-14"))
+        self.cursor.execute(config,("3","T160003","2020-3-16","2020-7-16"))
+        self.cursor.execute(config,("3","S1620101","2020-5-14","2020-7-14"))
+        self.cursor.execute(config,("4","T160002","2020-2-29","2020-6-29"))
+        self.cursor.execute(config,("4","S1620101","2020-5-14","2020-7-14"))
+        self.cursor.execute(config,("5","T160002","2020-2-29","2020-6-29"))
         self.database.commit()
+
+     # 创建新的学生
+    def create_student(self,ID,name,clas,profession,college,room,password,sex=None,phone=None,birthday=None):
+        config = '''insert into student(
+            id,name,sex,class,profession,college,room,phone,birthday,password) 
+            values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+        args = (ID,name,sex,clas,profession,college,room,phone,birthday,password)
+        try:
+            self.cursor.execute(config,args)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
+    # 创建新的课程
+    def create_course(self,ID,name,Type,credit,teacher,schedule=None,exam_type=None,exam_date=None,exam_room=None):
+        config = '''insert into course(id,name,type,credit,teacher,schedule,exam_type,exam_date,exam_room)
+                    values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+        args = (ID,name,Type,credit,teacher,schedule,exam_type,exam_date,exam_room)
+        try:
+            res = self.cursor.execute(config,args)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
+    # 创建新的书籍
+    def create_book(self,ID,name,Sum,author=None,Type=None,year=None):
+        a = '''insert into book(id,name,sum,avaible,author,type,year) values(%s,%s,%s,%s,%s,%s,%s)'''
+        b=(ID,name,Sum,Sum,author,Type,year)
+        try:
+            self.cursor.execute(a,b)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+    
+    # 创建新的管理员
+    def create_manager(self,ID,name,password,sex= None,email=None,phone=None,birthday=None):
+        a = '''insert into manager(id,name,password,sex,email,phone,birthday) values(%s,%s,%s,%s,%s,%s,%s)'''
+        b=(ID,name,password,sex,email,phone,birthday)
+        try:
+            self.cursor.execute(a,b)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+    
+    # 创建新的教师
+    def create_teacher(self,ID,name,password,sex=None,email=None,phone=None,college=None,birthday=None):
+        config = '''insert into teacher(id,name,password,sex,email,phone,college,birthday) values(%s,%s,%s,%s,%s,%s,%s,%s)'''
+        args = (ID,name,password,sex,email,phone,college,birthday)
+        try:
+            res = self.cursor.execute(config,args)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
