@@ -1,4 +1,5 @@
 import mysql.connector
+import re
 class mydb(object):
 
     # 连接本地数据库并进行初始化
@@ -285,22 +286,22 @@ class mydb(object):
         for i in range(14):
             for j in range(5):
                 for k in range(5):
-                    room = str(i+1)+"-"+str(j)+"0"+str(k)
+                    room = str(i+1)+"-"+str(j)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+1),0,0))
         for i in range(14):
             for j in range(6):
                 for k in range(5):
-                    room = str(i+16)+"-"+str(j)+"0"+str(k)
+                    room = str(i+16)+"-"+str(j)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+16),0,0))
         for i in range(15):
             for j in range(7):
                 for k in range(5):
-                    room = str(i+31)+"-"+str(j)+"0"+str(k)
+                    room = str(i+31)+"-"+str(j)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+31),0,0))
         for i in range(15):
             for j in range(8):
                 for k in range(5):
-                    room = str(i+46)+"-"+str(j)+"0"+str(k)
+                    room = str(i+46)+"-"+str(j)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+46),0,0))
         config = '''update room set people=1 where id="9-101"'''
         self.cursor.execute(config)
@@ -357,7 +358,13 @@ class mydb(object):
         self.database.commit()
 
      # 创建新的学生
-    def create_student(self,ID,name,clas,profession,college,room,password,sex=None,phone=None,birthday=None):
+    def create_student(self,ID,name,clas,profession,college,password,sex=None,phone=None,birthday=None):
+        config = '''select id from room where people<4'''
+        self.cursor.execute(config)
+        res = self.cursor.fetchall()
+        room = res[0][0]
+        config = '''update room set people=people+1 where id={!r}'''.format(room)
+        self.cursor.execute(config)
         config = '''insert into student(
             id,name,sex,class,profession,college,room,phone,birthday,password) 
             values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
@@ -428,3 +435,91 @@ class mydb(object):
             self.database.rollback()
             flag = False
         return flag
+
+    # 查询个人信息
+    def show_info(self,ID):
+        # 教师个人信息
+        if re.match("T",ID)!=None:
+            config = '''select id,name,sex,email,phone,college,birthday,salary from teacher where id={!r}'''.format(ID)
+            try:
+                self.cursor.execute(config)
+                res = self.cursor.fetchall()
+                flag = True
+            except mysql.connector.Error as e:
+                print("select fails! {}".format(e))
+                self.database.rollback()
+                res = None
+                flag = False
+        # 学生个人信息
+        elif re.match("S",ID)!=None:
+            config = '''select id,name,sex,class,profession,college,room,phone,birthday from student where id={!r}'''.format(ID)
+            try:
+                self.cursor.execute(config)
+                res = self.cursor.fetchall()
+                flag = True
+            except mysql.connector.Error as e:
+                print("select fails! {}".format(e))
+                self.database.rollback()
+                res = None
+                flag = False
+        # 工作人员信息
+        elif re.match("W",ID)!=None:
+            config = '''select id,name,sex,phone,birthday,salary from worker where id={!r}'''.format(ID)
+            try:
+                self.cursor.execute(config)
+                res = self.cursor.fetchall()
+                flag = True
+            except mysql.connector.Error as e:
+                print("select fails! {}".format(e))
+                self.database.rollback()
+                res = None
+                flag = False
+        # 管理人员信息
+        elif re.match("M",ID)!=None:
+            config = '''select id,name,sex,email,phone,birthday from manager where id={!r}'''.format(ID)
+            try:
+                self.cursor.execute(config)
+                res = self.cursor.fetchall()
+                flag = True
+            except mysql.connector.Error as e:
+                print("select fails! {}".format(e))
+                self.database.rollback()
+                res = None
+                flag = False
+        return res,flag
+    
+    # 显示课程
+    def show_course(self,condition):
+        config = '''select id,name,teacher,credit,type,schedule,exam_type from course'''
+        if condition != None:
+            config = config+" where "+condition
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            self.database.rollback()
+            res = None
+            flag = False
+        return res,flag
+    
+    # 显示书籍
+    def show_book(self,condition):
+        config = '''select id,name,author,type,year,sum,avaible from book'''
+        if condition!=None:
+            config = config+" where "+condition
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            self.database.rollback()
+            res = None
+            flag = False
+        return res,flag
+    
+    # 显示考试科目
+    def show_test(self,ID):
+        
