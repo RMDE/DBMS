@@ -521,5 +521,5 @@ class mydb(object):
         return res,flag
     
     # 显示考试科目
-    def show_test(self,ID):
+    #def show_test(self,ID):
         
