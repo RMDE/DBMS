@@ -7,7 +7,7 @@ class: id,college,teacher,monitor
 
 teacher: id,name,sex,email,phone,college,birthday,salary,password
 
-course: id,name,type,credit(学分),teacher,schedule,[class(教学班，set)],exam-type,exam-date,exam-room
+course: id,name,type,credit(学分),teacher,schedule,exam-type,exam-date,exam-room
 
 college: id,name,dean(院长),[专业]
 
@@ -21,7 +21,7 @@ room: id,department,people,charge(可用电费)
 
 book: id,name,type,author,year,sum,avaible
 
-borrow: book(book-id),person,time,deadline,fee(欠费) [还书提醒(弹窗)]
+borrow: book(book-id),person,time,deadline [还书提醒(弹窗)]
 
 manager: id,name,sex,email,phone,birthday,password
 
