@@ -286,22 +286,22 @@ class mydb(object):
         for i in range(14):
             for j in range(5):
                 for k in range(5):
-                    room = str(i+1)+"-"+str(j)+"0"+str(k+1)
+                    room = str(i+1)+"-"+str(j+1)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+1),0,0))
         for i in range(14):
             for j in range(6):
                 for k in range(5):
-                    room = str(i+16)+"-"+str(j)+"0"+str(k+1)
+                    room = str(i+16)+"-"+str(j+1)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+16),0,0))
         for i in range(15):
             for j in range(7):
                 for k in range(5):
-                    room = str(i+31)+"-"+str(j)+"0"+str(k+1)
+                    room = str(i+31)+"-"+str(j+1)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+31),0,0))
         for i in range(15):
             for j in range(8):
                 for k in range(5):
-                    room = str(i+46)+"-"+str(j)+"0"+str(k+1)
+                    room = str(i+46)+"-"+str(j+1)+"0"+str(k+1)
                     self.cursor.execute(config,(room,str(i+46),0,0))
         config = '''update room set people=1 where id="9-101"'''
         self.cursor.execute(config)
@@ -359,7 +359,7 @@ class mydb(object):
 
      # 创建新的学生
     def create_student(self,ID,name,clas,profession,college,password,sex=None,phone=None,birthday=None):
-        config = '''select id from room where people<4'''
+        config = '''select id from room where people<4 limit 1'''
         self.cursor.execute(config)
         res = self.cursor.fetchall()
         room = res[0][0]
@@ -377,7 +377,7 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
-        return flag
+        return room,flag
 
     # 创建新的课程
     def create_course(self,ID,name,Type,credit,teacher,schedule=None,exam_type=None,exam_date=None,exam_room=None):
