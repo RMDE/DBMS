@@ -149,8 +149,7 @@ class mydb(object):
         except mysql.connector.Error as e:
             print("create fails!{}".format(e))
             self.database.rollback()
-
-    
+  
     # 插入初始数据
     def init_data(self):
         config='''insert into college(id,name,profession) values(%s,%s,%s)'''
@@ -331,6 +330,8 @@ class mydb(object):
         self.cursor.execute(config,("8","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
         self.cursor.execute('''update course set exam_date="2000-6-7 8:00:00" where id="3"''')
         self.cursor.execute('''update course set exam_room="2201" where id="3"''')
+        self.cursor.execute('''update course set exam_date="2000-5-25 8:00:00" where id="1"''')
+        self.cursor.execute('''update course set exam_room="2301" where id="1"''')
         config = '''insert into choose(student,course,time) values(%s,%s,%s)'''
         self.cursor.execute(config,("S1620101","1","2020-1-10 9:23:45"))
         self.cursor.execute(config,("S1620101","2","2020-1-12 15:02:12"))
@@ -339,13 +340,14 @@ class mydb(object):
         self.cursor.execute(config,("S1620101","5","2020-1-10 10:38:22"))
         self.cursor.execute(config,("S1620101","6","2020-2-9 12:21:05"))
         self.cursor.execute(config,("S1620101","7","2020-2-9 12:21:24"))
-        self.cursor.execute(config,("S1620101","8","2020-4-5 15:03:33"))
+        self.cursor.execute('''update choose set score=100 where course="1" and student="S1620101"''')
         config = '''insert into book(id,name,author,type,year,sum,avaible) values(%s,%s,%s,%s,%s,%s,%s)'''
         self.cursor.execute(config,("1","高等数学","王五","8",2017,8,6))
         self.cursor.execute(config,("2","线性代数","张三","8",2017,5,4))
         self.cursor.execute(config,("3","数据结构","刘德峰","16",2016,12,10))
         self.cursor.execute(config,("4","操作系统","周赋好","16",2018,8,6))
         self.cursor.execute(config,("5","嵌入式","张梁","16",2019,6,5))
+        self.cursor.execute(config,("6","世界图鉴","孙可望","11",2020,1,0))
         config = '''insert into borrow(book,person,time,deadline) values(%s,%s,%s,%s)'''
         self.cursor.execute(config,("1","T080001","2020-4-1","2020-8-1"))
         self.cursor.execute(config,("2","T080001","2020-4-1","2020-8-1"))
@@ -355,9 +357,10 @@ class mydb(object):
         self.cursor.execute(config,("4","T160002","2020-2-29","2020-6-29"))
         self.cursor.execute(config,("4","S1620101","2020-5-14","2020-7-14"))
         self.cursor.execute(config,("5","T160002","2020-2-29","2020-6-29"))
+        self.cursor.execute(config,("6","T110001","2020-4-3","2020-8-3"))
         self.database.commit()
 
-     # 创建新的学生
+    # 创建新的学生
     def create_student(self,ID,name,clas,profession,college,password,sex=None,phone=None,birthday=None):
         config = '''select id from room where people<4 limit 1'''
         self.cursor.execute(config)
@@ -422,6 +425,20 @@ class mydb(object):
             flag = False
         return flag
     
+    # 创建新的工作人员
+    def create_worker(self,ID,name,password,sex= None,phone=None,birthday=None):
+        a = '''insert into worker(id,name,password,sex,phone,birthday) values(%s,%s,%s,%s,%s,%s)'''
+        b=(ID,name,password,sex,phone,birthday)
+        try:
+            self.cursor.execute(a,b)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
     # 创建新的教师
     def create_teacher(self,ID,name,password,sex=None,email=None,phone=None,college=None,birthday=None):
         config = '''insert into teacher(id,name,password,sex,email,phone,college,birthday) values(%s,%s,%s,%s,%s,%s,%s,%s)'''
@@ -447,7 +464,6 @@ class mydb(object):
                 flag = True
             except mysql.connector.Error as e:
                 print("select fails! {}".format(e))
-                self.database.rollback()
                 res = None
                 flag = False
         # 学生个人信息
@@ -459,7 +475,6 @@ class mydb(object):
                 flag = True
             except mysql.connector.Error as e:
                 print("select fails! {}".format(e))
-                self.database.rollback()
                 res = None
                 flag = False
         # 工作人员信息
@@ -471,7 +486,6 @@ class mydb(object):
                 flag = True
             except mysql.connector.Error as e:
                 print("select fails! {}".format(e))
-                self.database.rollback()
                 res = None
                 flag = False
         # 管理人员信息
@@ -483,13 +497,12 @@ class mydb(object):
                 flag = True
             except mysql.connector.Error as e:
                 print("select fails! {}".format(e))
-                self.database.rollback()
                 res = None
                 flag = False
         return res,flag
     
     # 显示课程
-    def show_course(self,condition):
+    def show_course(self,condition=None):
         config = '''select id,name,teacher,credit,type,schedule,exam_type from course'''
         if condition != None:
             config = config+" where "+condition
@@ -499,13 +512,12 @@ class mydb(object):
             flag = True
         except mysql.connector.Error as e:
             print("select fails! {}".format(e))
-            self.database.rollback()
             res = None
             flag = False
         return res,flag
     
     # 显示书籍
-    def show_book(self,condition):
+    def show_book(self,condition=None):
         config = '''select id,name,author,type,year,sum,avaible from book'''
         if condition!=None:
             config = config+" where "+condition
@@ -515,11 +527,279 @@ class mydb(object):
             flag = True
         except mysql.connector.Error as e:
             print("select fails! {}".format(e))
-            self.database.rollback()
             res = None
             flag = False
         return res,flag
     
-    # 显示考试科目
-    #def show_test(self,ID):
-        
+    # 显示未考试科目
+    def show_test(self,ID):
+        config = '''select id,name,exam_type,exam_date,exam_room
+                    from course where id in(
+                        select course from choose where 
+                            student={!r} and score is NULL)'''.format(ID) 
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,flag
+
+    # 显示电费
+    def show_charge(self,ID):
+        config = '''select area,room.id,charge from department,room 
+                    where department.id=room.department and 
+                        room.id=(select room from student 
+                            where id={!r})'''.format(ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,flag
+
+    # 显示成绩
+    def show_grade(self,ID):
+        config = '''select name,credit,score from course inner join (
+                        select score,course from choose where student={!r}) X
+                    on course.id=X.course where score is not null'''.format(ID)
+        config1 = '''select avg(score) from choose group by student having student={!r}'''.format(ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            self.cursor.execute(config1)
+            res1 = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            res1 = None
+            flag = False
+        return res,res1,flag
+    
+    # 显示借阅欠费情况
+    def show_fee(self,ID):
+        pass#name,time,deadline,fee
+
+    # 显示宿舍楼信息
+    def show_department(self,ID):
+        pass#显示管理的宿舍楼
+
+    # 更新选课记录
+    def update_choose(self,student,course):
+        config = '''insert into choose(student,course,time) values(%s,%s,now())'''
+        try:
+            self.cursor.execute(config,(student,course))
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+    
+    # 更新借书记录
+    def update_borrow(self,person,book):
+        # 判断person是否合法
+        if re.match("S",person)!=None:
+            config = '''select * from student where id={!r}'''.format(person)
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            if res==[]:
+                print("No such person '{}'".format(person))
+                return False
+            temp=2
+        elif re.match("T",person)!=None:
+            config = '''select * from teacher where id={!r}'''.format(person)
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            if res==[]:
+                print("No such person '{}'".format(person))
+                return False
+            temp=4
+        else:
+                print("No such person '{}'".format(person))
+                return False
+        # 判断书是否还剩
+        config = '''select avaible from book where id={!r}'''.format(book)
+        self.cursor.execute(config)
+        res = self.cursor.fetchall()
+        if res==[]:
+            print("No such book '{}'".format(book))
+            return false
+        elif res[0][0]<1:
+            print("The book is not avaible!")
+            return False
+        # 写入数据
+        config = '''insert into borrow(book,person,time,deadline) values(%s,%s,curdate(),date_add(curdate(),interval %s month))'''
+        try:
+            self.cursor.execute(config,(book,person,temp))
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("insert fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        config = '''update book set avaible=avaible-1 where id={!r}'''.format(book)
+        try:
+            self.cursor.execute(config)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
+    # 更新电费
+    def update_charge(self,ID,add):
+        # 判断传入的是房间号还是学生学号
+        if re.match("S",ID)!=None:
+            config = '''select room from student where id={!r}'''.format(ID)
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            ID = res[0][0]
+        config = '''update room set charge=charge+{} where id={!r}'''.format(add,ID)
+        try:
+            self.cursor.execute(config)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
+    # 更新成绩
+    def update_grade(self,student,scourse,score):
+        pass
+
+    # 更新考试时间及地点
+    def update_test(self,time,addr):
+        pass
+
+    # 更新借阅欠费
+    def update_fee(self,ID):
+        pass#删除所有已过期借阅
+
+    # 搜索教师
+    def search_teacher(self,segment,condition=None):
+        config = '''select {} from teacher'''.format(segment)
+        if condition!=None:
+            config = config+" where "+condition
+        courses = []
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            for teacher in res:
+                ID = teacher[0]
+                self.cursor.execute('''select name from course where teacher={!r}'''.format(ID))
+                course = self.cursor.fetchall()
+                courses.append(course)
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,courses,flag
+
+    # 搜索学生
+    def search_student(self,segment,condition=None):
+        config = '''select {} from student'''.format(segment)
+        if condition!=None:
+            config = config+" where "+condition
+        courses = []
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,flag
+
+    # 搜索宿舍楼
+    def search_department(self,condition=None):
+        config = '''select id,area,manager,capacity from department'''
+        if condition!=None:
+            config = config+" where "+condition
+        courses = []
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,flag
+
+    # 搜索工作人员
+    def search_worker(self,condition=None):
+        config = '''select id,name,phone,salary from worker'''
+        if condition!=None:
+            config = config+" where "+condition
+        courses = []
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,flag
+
+    # 删除人员
+    def delete_person(self,ID):
+        pass#S,T,W
+
+    # 更新学生信息
+    def update_student(self,ID,name,clas,profession,college,sex,phone,birthday):
+        config = '''update student set
+            name={!r},sex={!r},class={!r},profession={!r},college={!r},phone={!r},birthday={!r} where id={!r}'''.format
+        args = (name,sex,clas,profession,college,phone,birthday,ID)
+        try:
+            self.cursor.execute(config(args))
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
+    # 更新工作人员信息
+    def update_worker(self,ID,name,sex,phone,birthday,salary):
+        config = '''update worker set name={!r},sex={!r},phone={!r},birthday={!r},salary={!r} where id={!r}'''.format
+        args =(name,sex,phone,birthday,salary,ID)
+        try:
+            self.cursor.execute(config(args))
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+    
+    # 更新教师信息
+    def update_teacher(self,ID,name,sex,email,phone,college,birthday,salary):
+        config = '''update teacher set name={!r},sex={!r},email={!r},phone={!r},college={!r},birthday={!r},salary={!r} where id={!r}'''.format
+        args = (name,sex,email,phone,college,birthday,salary,ID)
+        try:
+            self.cursor.execute(config(args))
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails!{}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
+
