@@ -37,7 +37,7 @@ class mydb(object):
                         birthday date,
                         salary dec(8,2),
                         password varchar(30) not null,
-                        foreign key(college) references college(id))'''
+                        foreign key(college) references college(id) on update cascade)'''
         colge_ch = '''alter table college add constraint f1 
                         foreign key(dean) references teacher(id)'''
         classes =  '''create table class(
@@ -45,8 +45,8 @@ class mydb(object):
                         college varchar(20) not null,
                         teacher varchar(20),
                         monitor varchar(20),
-                        foreign key(college) references college(id),
-                        foreign key(teacher) references teacher(id))'''
+                        foreign key(college) references college(id) on update cascade on delete cascade,
+                        foreign key(teacher) references teacher(id) on update cascade)'''
         course = '''create table course(
                         id varchar(20) primary key,
                         name varchar(20) not null,
@@ -61,14 +61,14 @@ class mydb(object):
                         exam_type enum("考试","考查"),
                         exam_date datetime,
                         exam_room varchar(20),
-                        foreign key(teacher) references teacher(id))'''
+                        foreign key(teacher) references teacher(id) on update cascade)'''
         choose = '''create table choose(
                         student varchar(20),
                         course varchar(20),
                         time datetime not null,
                         score int,
-                        foreign key(student) references student(id),
-                        foreign key(course) references course(id),
+                        foreign key(student) references student(id) on delete cascade on update cascade,
+                        foreign key(course) references course(id) on delete cascade,
                         primary key(student,course))'''
         worker = '''create table worker(
                         id varchar(20) primary key,
@@ -89,7 +89,7 @@ class mydb(object):
                         department varchar(20) not null,
                         people int default 0,
                         charge dec(8,2),
-                        foreign key(department) references department(id))'''
+                        foreign key(department) references department(id) on delete cascade)'''
         students = '''create table student(
                         id varchar(20) primary key,
                         name varchar(20) not null,
@@ -101,11 +101,11 @@ class mydb(object):
                         phone varchar(20),
                         birthday date,
                         password varchar(30) not null,
-                        foreign key(class) references class(id),
+                        foreign key(class) references class(id) ,
                         foreign key(college) references college(id),
-                        foreign key(room) references room(id))'''
+                        foreign key(room) references room(id) on delete cascade)'''
         ch2 = '''alter table class add constraint f2 
-                        foreign key(monitor) references student(id)'''
+                        foreign key(monitor) references student(id) on delete cascade'''
         book = '''create table book(
                         id varchar(20) primary key,
                         name varchar(20) not null,
@@ -114,14 +114,14 @@ class mydb(object):
                         year int,
                         sum int not null,
                         avaible int not null,
-                        foreign key(type) references college(id))'''
+                        foreign key(type) references college(id) on update cascade)'''
         borrow = '''create table borrow(
                         book varchar(20),
                         person varchar(20),
                         time date not null,
                         deadline date not null,
                         primary key(book,person),
-                        foreign key(book) references book(id))'''
+                        foreign key(book) references book(id) on delete cascade)'''
         manager = '''create table manager(
                         id varchar(20) primary key,
                         name varchar(20) not null,
@@ -328,9 +328,9 @@ class mydb(object):
         self.cursor.execute(config,("6","英语","必修",1.5,"T120001","Wed-16:15~18:00","考试"))
         self.cursor.execute(config,("7","操作系统","必修",3.5,"T160002","Mon-14:00~15:45,Wed-8:00~9:45","考试"))
         self.cursor.execute(config,("8","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
-        self.cursor.execute('''update course set exam_date="2000-6-7 8:00:00" where id="3"''')
+        self.cursor.execute('''update course set exam_date="2020-6-7 8:00:00" where id="3"''')
         self.cursor.execute('''update course set exam_room="2201" where id="3"''')
-        self.cursor.execute('''update course set exam_date="2000-5-25 8:00:00" where id="1"''')
+        self.cursor.execute('''update course set exam_date="2020-5-25 8:00:00" where id="1"''')
         self.cursor.execute('''update course set exam_room="2301" where id="1"''')
         config = '''insert into choose(student,course,time) values(%s,%s,%s)'''
         self.cursor.execute(config,("S1620101","1","2020-1-10 9:23:45"))
@@ -584,11 +584,42 @@ class mydb(object):
     
     # 显示借阅欠费情况
     def show_fee(self,ID):
-        pass#name,time,deadline,fee
+        config = '''select name,time,deadline from book inner join(select book,time,deadline from borrow where person={!r}) x on x.book=book.id'''.format(ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag=False
+        return res,flag
 
     # 显示宿舍楼信息
     def show_department(self,ID):
-        pass#显示管理的宿舍楼
+        config = '''select id,area,capacity from department where manager={!r}'''.format(ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag=False
+        return res,flag
+
+    # 显示宿舍房间信息
+    def show_room(self,ID):
+        config = '''select id,people,charge from room where department={!r}'''.format(ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag=False
+        return res,flag
 
     # 更新选课记录
     def update_choose(self,student,course):
@@ -676,16 +707,44 @@ class mydb(object):
         return flag
 
     # 更新成绩
-    def update_grade(self,student,scourse,score):
-        pass
+    def update_grade(self,student,course,score):
+        config = '''update choose set score={} where student={!r} and course={!r}'''.format(score,student,course)
+        try:
+            self.cursor.execute(config)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
 
     # 更新考试时间及地点
-    def update_test(self,time,addr):
-        pass
+    def update_test(self,ID,time,addr):
+        config = '''update course set exam_date={!r},exam_room={!r} where id={!r}'''.format(time,addr,ID)
+        try:
+            self.cursor.execute(config)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("update fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
 
     # 更新借阅欠费
-    def update_fee(self,ID):
-        pass#删除所有已过期借阅
+    def delete_borrow(self,ID):
+        #删除所有已过期借阅
+        config = '''delete from borrow where person={!r} and to_days(deadline)<to_days(curdate())'''.format(ID)
+        try:
+            self.cursor.execute(config)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("delete fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
 
     # 搜索教师
     def search_teacher(self,segment,condition=None):
@@ -758,15 +817,29 @@ class mydb(object):
 
     # 删除人员
     def delete_person(self,ID):
-        pass#S,T,W
+        if re.match("S",ID)!=None:
+            table = "student"
+        elif re.match("T",ID)!=None:
+            table = "teacher"
+        elif re.match("W",ID)!=None:
+            table = "worker"
+        config = '''delete from {} where id={!r}'''.format(table,ID)
+        try:
+            self.cursor.execute(config)
+            self.database.commit()
+            flag = True
+        except mysql.connector.Error as e:
+            print("delete fails! {}".format(e))
+            self.database.rollback()
+            flag = False
+        return flag
 
     # 更新学生信息
     def update_student(self,ID,name,clas,profession,college,sex,phone,birthday):
         config = '''update student set
             name={!r},sex={!r},class={!r},profession={!r},college={!r},phone={!r},birthday={!r} where id={!r}'''.format
-        args = (name,sex,clas,profession,college,phone,birthday,ID)
         try:
-            self.cursor.execute(config(args))
+            self.cursor.execute(config(name,sex,clas,profession,college,phone,birthday,ID))
             self.database.commit()
             flag = True
         except mysql.connector.Error as e:
@@ -778,9 +851,8 @@ class mydb(object):
     # 更新工作人员信息
     def update_worker(self,ID,name,sex,phone,birthday,salary):
         config = '''update worker set name={!r},sex={!r},phone={!r},birthday={!r},salary={!r} where id={!r}'''.format
-        args =(name,sex,phone,birthday,salary,ID)
         try:
-            self.cursor.execute(config(args))
+            self.cursor.execute(config(name,sex,phone,birthday,salary,ID))
             self.database.commit()
             flag = True
         except mysql.connector.Error as e:
@@ -792,9 +864,8 @@ class mydb(object):
     # 更新教师信息
     def update_teacher(self,ID,name,sex,email,phone,college,birthday,salary):
         config = '''update teacher set name={!r},sex={!r},email={!r},phone={!r},college={!r},birthday={!r},salary={!r} where id={!r}'''.format
-        args = (name,sex,email,phone,college,birthday,salary,ID)
         try:
-            self.cursor.execute(config(args))
+            self.cursor.execute(config(name,sex,email,phone,college,birthday,salary,ID))
             self.database.commit()
             flag = True
         except mysql.connector.Error as e:
