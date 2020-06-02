@@ -873,4 +873,27 @@ class mydb(object):
             self.database.rollback()
             flag = False
         return flag
+    # 获取ID对应的密码
+    def get_passwd(self,ID):
+        if re.match("T",ID):
+            table = "teacher"
+        elif re.match("W",ID):
+            table = "worker"
+        elif re.match("M",ID):
+            table = "manager"
+        elif re.match("S",ID):
+            table = "student"
+        else:
+            return None,False
+        config = '''select password from {} where id={!r}'''.format(table,ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            print("select fails! {}".format(e))
+            res = None
+            flag = False
+        return res,flag
+        
 
