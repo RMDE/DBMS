@@ -149,9 +149,15 @@ class mydb(object):
         except mysql.connector.Error as e:
             print("create fails!{}".format(e))
             self.database.rollback()
-  
+        self.cursor.close()
+    
+    # 解除数据库关联
+    def __del__(self):
+        self.database.close()
+
     # 插入初始数据
     def init_data(self):
+        self.cursor = self.database.cursor() # 当前游标
         config='''insert into college(id,name,profession) values(%s,%s,%s)'''
         self.cursor.execute(config,("1","航空宇航","直升机,飞行器,结构工程与力学,空气动力学"))
         self.cursor.execute(config,("2","能源与动力","内流与叶轮机械,强度与振动工程,控制工程"))
@@ -359,9 +365,11 @@ class mydb(object):
         self.cursor.execute(config,("5","T160002","2020-2-29","2020-6-29"))
         self.cursor.execute(config,("6","T110001","2020-4-3","2020-8-3"))
         self.database.commit()
+        self.cursor.close()
 
     # 创建新的学生
     def create_student(self,ID,name,clas,profession,college,password,sex=None,phone=None,birthday=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id from room where people<4 limit 1'''
         self.cursor.execute(config)
         res = self.cursor.fetchall()
@@ -380,10 +388,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return room,flag
 
     # 创建新的课程
     def create_course(self,ID,name,Type,credit,teacher,schedule=None,exam_type=None,exam_date=None,exam_room=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''insert into course(id,name,type,credit,teacher,schedule,exam_type,exam_date,exam_room)
                     values(%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
         args = (ID,name,Type,credit,teacher,schedule,exam_type,exam_date,exam_room)
@@ -395,10 +405,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 创建新的书籍
     def create_book(self,ID,name,Sum,author=None,Type=None,year=None):
+        self.cursor = self.database.cursor() # 当前游标
         a = '''insert into book(id,name,sum,avaible,author,type,year) values(%s,%s,%s,%s,%s,%s,%s)'''
         b=(ID,name,Sum,Sum,author,Type,year)
         try:
@@ -409,10 +421,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
     
     # 创建新的管理员
     def create_manager(self,ID,name,password,sex= None,email=None,phone=None,birthday=None):
+        self.cursor = self.database.cursor() # 当前游标
         a = '''insert into manager(id,name,password,sex,email,phone,birthday) values(%s,%s,%s,%s,%s,%s,%s)'''
         b=(ID,name,password,sex,email,phone,birthday)
         try:
@@ -423,10 +437,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
     
     # 创建新的工作人员
     def create_worker(self,ID,name,password,sex= None,phone=None,birthday=None):
+        self.cursor = self.database.cursor() # 当前游标
         a = '''insert into worker(id,name,password,sex,phone,birthday) values(%s,%s,%s,%s,%s,%s)'''
         b=(ID,name,password,sex,phone,birthday)
         try:
@@ -437,10 +453,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 创建新的教师
     def create_teacher(self,ID,name,password,sex=None,email=None,phone=None,college=None,birthday=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''insert into teacher(id,name,password,sex,email,phone,college,birthday) values(%s,%s,%s,%s,%s,%s,%s,%s)'''
         args = (ID,name,password,sex,email,phone,college,birthday)
         try:
@@ -451,10 +469,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 查询个人信息
     def show_info(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         # 教师个人信息
         if re.match("T",ID)!=None:
             config = '''select id,name,sex,email,phone,college,birthday,salary from teacher where id={!r}'''.format(ID)
@@ -499,10 +519,12 @@ class mydb(object):
                 print("select fails! {}".format(e))
                 res = None
                 flag = False
+        self.cursor.close()
         return res,flag
     
     # 显示课程
     def show_course(self,condition=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,name,teacher,credit,type,schedule,exam_type from course'''
         if condition != None:
             config = config+" where "+condition
@@ -514,10 +536,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
     
     # 显示书籍
     def show_book(self,condition=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,name,author,type,year,sum,avaible from book'''
         if condition!=None:
             config = config+" where "+condition
@@ -529,10 +553,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
     
     # 显示未考试科目
     def show_test(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,name,exam_type,exam_date,exam_room
                     from course where id in(
                         select course from choose where 
@@ -545,10 +571,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
 
     # 显示电费
     def show_charge(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select area,room.id,charge from department,room 
                     where department.id=room.department and 
                         room.id=(select room from student 
@@ -561,10 +589,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
 
     # 显示成绩
     def show_grade(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select name,credit,score from course inner join (
                         select score,course from choose where student={!r}) X
                     on course.id=X.course where score is not null'''.format(ID)
@@ -580,10 +610,12 @@ class mydb(object):
             res = None
             res1 = None
             flag = False
+        self.cursor.close()
         return res,res1,flag
     
     # 显示借阅欠费情况
     def show_fee(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select name,time,deadline from book inner join(select book,time,deadline from borrow where person={!r}) x on x.book=book.id'''.format(ID)
         try:
             self.cursor.execute(config)
@@ -593,10 +625,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag=False
+        self.cursor.close()
         return res,flag
 
     # 显示宿舍楼信息
     def show_department(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,area,capacity from department where manager={!r}'''.format(ID)
         try:
             self.cursor.execute(config)
@@ -606,10 +640,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag=False
+        self.cursor.close()
         return res,flag
 
     # 显示宿舍房间信息
     def show_room(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,people,charge from room where department={!r}'''.format(ID)
         try:
             self.cursor.execute(config)
@@ -619,10 +655,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag=False
+        self.cursor.close()
         return res,flag
 
     # 更新选课记录
     def update_choose(self,student,course):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''insert into choose(student,course,time) values(%s,%s,now())'''
         try:
             self.cursor.execute(config,(student,course))
@@ -632,10 +670,12 @@ class mydb(object):
             print("insert fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
     
     # 更新借书记录
     def update_borrow(self,person,book):
+        self.cursor = self.database.cursor() # 当前游标
         # 判断person是否合法
         if re.match("S",person)!=None:
             config = '''select * from student where id={!r}'''.format(person)
@@ -643,6 +683,7 @@ class mydb(object):
             res = self.cursor.fetchall()
             if res==[]:
                 print("No such person '{}'".format(person))
+                self.cursor.close()
                 return False
             temp=2
         elif re.match("T",person)!=None:
@@ -651,10 +692,12 @@ class mydb(object):
             res = self.cursor.fetchall()
             if res==[]:
                 print("No such person '{}'".format(person))
+                self.cursor.close()
                 return False
             temp=4
         else:
                 print("No such person '{}'".format(person))
+                self.cursor.close()
                 return False
         # 判断书是否还剩
         config = '''select avaible from book where id={!r}'''.format(book)
@@ -662,9 +705,11 @@ class mydb(object):
         res = self.cursor.fetchall()
         if res==[]:
             print("No such book '{}'".format(book))
+            self.cursor.close()
             return false
         elif res[0][0]<1:
             print("The book is not avaible!")
+            self.cursor.close()
             return False
         # 写入数据
         config = '''insert into borrow(book,person,time,deadline) values(%s,%s,curdate(),date_add(curdate(),interval %s month))'''
@@ -685,10 +730,12 @@ class mydb(object):
             print("update fails! {}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 更新电费
     def update_charge(self,ID,add):
+        self.cursor = self.database.cursor() # 当前游标
         # 判断传入的是房间号还是学生学号
         if re.match("S",ID)!=None:
             config = '''select room from student where id={!r}'''.format(ID)
@@ -704,10 +751,12 @@ class mydb(object):
             print("update fails! {}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 更新成绩
     def update_grade(self,student,course,score):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''update choose set score={} where student={!r} and course={!r}'''.format(score,student,course)
         try:
             self.cursor.execute(config)
@@ -717,10 +766,12 @@ class mydb(object):
             print("update fails! {}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 更新考试时间及地点
     def update_test(self,ID,time,addr):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''update course set exam_date={!r},exam_room={!r} where id={!r}'''.format(time,addr,ID)
         try:
             self.cursor.execute(config)
@@ -730,10 +781,12 @@ class mydb(object):
             print("update fails! {}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 更新借阅欠费
     def delete_borrow(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         #删除所有已过期借阅
         config = '''delete from borrow where person={!r} and to_days(deadline)<to_days(curdate())'''.format(ID)
         try:
@@ -744,10 +797,12 @@ class mydb(object):
             print("delete fails! {}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 搜索教师
     def search_teacher(self,segment,condition=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select {} from teacher'''.format(segment)
         if condition!=None:
             config = config+" where "+condition
@@ -765,10 +820,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,courses,flag
 
     # 搜索学生
     def search_student(self,segment,condition=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select {} from student'''.format(segment)
         if condition!=None:
             config = config+" where "+condition
@@ -781,10 +838,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
 
     # 搜索宿舍楼
     def search_department(self,condition=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,area,manager,capacity from department'''
         if condition!=None:
             config = config+" where "+condition
@@ -797,10 +856,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
 
     # 搜索工作人员
     def search_worker(self,condition=None):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''select id,name,phone,salary from worker'''
         if condition!=None:
             config = config+" where "+condition
@@ -813,10 +874,12 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
 
     # 删除人员
     def delete_person(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         if re.match("S",ID)!=None:
             table = "student"
         elif re.match("T",ID)!=None:
@@ -832,10 +895,12 @@ class mydb(object):
             print("delete fails! {}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 更新学生信息
     def update_student(self,ID,name,clas,profession,college,sex,phone,birthday):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''update student set
             name={!r},sex={!r},class={!r},profession={!r},college={!r},phone={!r},birthday={!r} where id={!r}'''.format
         try:
@@ -846,10 +911,12 @@ class mydb(object):
             print("update fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
 
     # 更新工作人员信息
     def update_worker(self,ID,name,sex,phone,birthday,salary):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''update worker set name={!r},sex={!r},phone={!r},birthday={!r},salary={!r} where id={!r}'''.format
         try:
             self.cursor.execute(config(name,sex,phone,birthday,salary,ID))
@@ -859,10 +926,12 @@ class mydb(object):
             print("update fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
     
     # 更新教师信息
     def update_teacher(self,ID,name,sex,email,phone,college,birthday,salary):
+        self.cursor = self.database.cursor() # 当前游标
         config = '''update teacher set name={!r},sex={!r},email={!r},phone={!r},college={!r},birthday={!r},salary={!r} where id={!r}'''.format
         try:
             self.cursor.execute(config(name,sex,email,phone,college,birthday,salary,ID))
@@ -872,9 +941,12 @@ class mydb(object):
             print("update fails!{}".format(e))
             self.database.rollback()
             flag = False
+        self.cursor.close()
         return flag
+
     # 获取ID对应的密码
     def get_passwd(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
         if re.match("T",ID):
             table = "teacher"
         elif re.match("W",ID):
@@ -884,6 +956,7 @@ class mydb(object):
         elif re.match("S",ID):
             table = "student"
         else:
+            self.cursor.close()
             return None,False
         config = '''select password from {} where id={!r}'''.format(table,ID)
         try:
@@ -894,6 +967,7 @@ class mydb(object):
             print("select fails! {}".format(e))
             res = None
             flag = False
+        self.cursor.close()
         return res,flag
         
 
