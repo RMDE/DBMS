@@ -22,10 +22,12 @@ class Gui(QWidget):
         return lbl
 
     # 创建输入框
-    def Input(self,txt,x,y,h=None,w=None):
+    def Input(self,x,y,txt=None,h=None,w=None):
         line = QLineEdit(self)
         line.move(x,y)
         line.resize(w,h)
+        if txt!=None:
+            line.setPlaceholderText(txt) # 在输入前给予提示
         return line
 
     # 窗口居中
