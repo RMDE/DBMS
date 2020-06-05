@@ -15,7 +15,7 @@ class Gui(QWidget):
         super().__init__()
 
     # 创建标签
-    def Label(self,txt,x,y,h=None,w=None):
+    def Label(self,txt,x,y,h=None,w=None,font="black",size=20):
         lbl = QLabel(self)
         if h==None:
             lbl.resize(lbl.sizeHint())
@@ -24,7 +24,8 @@ class Gui(QWidget):
         lbl.move(x,y)
         lbl.setText(txt)
         lbl.setAlignment(Qt.AlignCenter)
-        lbl.setStyleSheet("QLabel{background:white;}""QLabel{color:rgb(200,200,200);font-size:10px;font-weight:bold;font-family:宋体;}")
+        size = str(size)+"px"
+        lbl.setStyleSheet("QLabel{border:none;background:none;font-size:%s;color:%s;font-weight:bold;font-family:宋体;}"%(size,font))
         return lbl
 
     # 创建输入框
@@ -32,6 +33,8 @@ class Gui(QWidget):
         line = QLineEdit(self)
         line.move(x,y)
         line.resize(w,h)
+        line.setStyleSheet('''
+            QLineEdit{border:none;}''')
         if txt!=None:
             line.setPlaceholderText(txt) # 在输入前给予提示
         return line
@@ -44,13 +47,17 @@ class Gui(QWidget):
         self.move(qr.topLeft()) # 移动应用窗口与矩形重合
 
     # 按钮创建
-    def Button(self,name,x,y,event,h=None,w=None):
+    def Button(self,name,x,y,event,h=None,w=None,font="black",back="white",size=20):
         btn = QPushButton(name,self)
         if h==None:
             btn.resize(btn.sizeHint())
         else:
             btn.resize(w,h)
         btn.move(x,y)
+        size = str(size)+"px"
+        btn.setStyleSheet('''
+            QPushButton{color:%s;background:%s;border-radius:5px;font-size:%s;}
+            QPushButton:hover{background:gray;}'''%(font,back,size))
         btn.clicked.connect(event)
         return btn
 

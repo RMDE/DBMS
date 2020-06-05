@@ -5,8 +5,8 @@ import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
         QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit)
-from PyQt5.QtGui import QFont,QIcon,QPixmap
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QFont,QIcon,QPixmap,QPalette,QColor
+from PyQt5.QtCore import QCoreApplication,Qt
 import os
 
 name = None
@@ -20,16 +20,19 @@ def login(gui):
     gui.resize(600,400) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('信息管理系统') # 窗口标题
-    #gui.setWindowIcon(QIcon("Icon.jpg")) # 应用图标
-    lbl = gui.Label("登录",250,60,70,100)
-    lbl1 = gui.Label("",100,150,50,50)
+    gui.setWindowOpacity(0.97)
+    lbl = gui.Label("登录",250,30,70,100,"#6DDF6D",50)
+    lbl.setAutoFillBackground(False)
+    lbl1 = gui.Label("",100,120,50,50)
+    lbl1.setStyleSheet("QLabel{background:white;}")
     lbl1.setPixmap(Load("login.jpg",lbl1.width()/3*2,lbl1.height()/3*2))
-    lbl2 = gui.Label("",100,220,50,50)
+    lbl2 = gui.Label("",100,190,50,50)
+    lbl2.setStyleSheet("QLabel{background:white;}")
     lbl2.setPixmap(Load("passwd.jpg",lbl2.width()/3*2,lbl2.height()/3*2))
-    line1 = gui.Input(150,150,"学号/工号",50,350)
-    line2 = gui.Input(150,220,"密码",50,350)
+    line1 = gui.Input(150,120,"学号/工号",50,350)
+    line2 = gui.Input(150,190,"密码",50,350)
     line2.setEchoMode(QLineEdit.Password)
-    btn = gui.Button('登录',100,300,show_login_status,50,400)
+    btn = gui.Button('登录',100,270,show_login_status,50,400,"white","#6DDF6D",30)
     gui.show()
 
 # 显示登录成功状态
