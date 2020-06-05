@@ -5,9 +5,10 @@ import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
         QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit)
-from PyQt5.QtGui import QFont,QIcon
+from PyQt5.QtGui import QFont,QIcon,QPixmap
 from PyQt5.QtCore import QCoreApplication
-    
+import os
+
 name = None
 passwd = None
 line1 = None
@@ -19,8 +20,12 @@ def login(gui):
     gui.resize(600,400) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('信息管理系统') # 窗口标题
-    gui.setWindowIcon(QIcon('Element/Icon.jpg')) # 应用图标
+    #gui.setWindowIcon(QIcon("Icon.jpg")) # 应用图标
     lbl = gui.Label("登录",250,60,70,100)
+    lbl1 = gui.Label("",100,150,50,50)
+    lbl1.setPixmap(Load("login.jpg",lbl1.width()/3*2,lbl1.height()/3*2))
+    lbl2 = gui.Label("",100,220,50,50)
+    lbl2.setPixmap(Load("passwd.jpg",lbl2.width()/3*2,lbl2.height()/3*2))
     line1 = gui.Input(150,150,"学号/工号",50,350)
     line2 = gui.Input(150,220,"密码",50,350)
     line2.setEchoMode(QLineEdit.Password)
@@ -34,25 +39,25 @@ def show_login_status():
     passwd = line2.text()
     if name=="" or passwd=="":
         Info(gui,"用户名或密码不能为空")
-    else:
-        res,flag = mysql.get_passwd(name)
-        if flag==True and res!=[]:
-            res = res[0][0]
-            if passwd == res:
-                Info(gui,"登录成功")
-            else:
-                Error(gui,"密码错误")
-        elif flag==True and res==[]:
-            Error(gui,"用户名不存在")
-        else:
-            Error(gui,"数据库操作错误")
+    #else:
+    #    res,flag = mysql.get_passwd(name)
+    #    if flag==True and res!=[]:
+    #        res = res[0][0]
+    #        if passwd == res:
+    #            Info(gui,"登录成功")
+    #        else:
+    #            Error(gui,"密码错误")
+    #    elif flag==True and res==[]:
+    #        Error(gui,"用户名不存在")
+    #    else:
+    #        Error(gui,"数据库操作错误")
 
 
 if __name__=='__main__':
     global mysql,gui
     app = QApplication(sys.argv)
-    mysql = mydb("localhost","root","123456")
-    mysql.init_data()
+    #mysql = mydb("localhost","root","123456")
+    #mysql.init_data()
     gui = Gui()
     login(gui)
     sys.exit(app.exec_())

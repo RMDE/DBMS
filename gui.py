@@ -1,9 +1,14 @@
+'''
+author : RMDE
+function : gui tools
+'''
+
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
         QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit)
 from PyQt5.QtGui import QFont,QIcon
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QCoreApplication,Qt
 
 class Gui(QWidget):
     def __init__(self):
@@ -18,6 +23,7 @@ class Gui(QWidget):
             lbl.resize(w,h)
         lbl.move(x,y)
         lbl.setText(txt)
+        lbl.setAlignment(Qt.AlignCenter)
         lbl.setStyleSheet("QLabel{background:white;}""QLabel{color:rgb(200,200,200);font-size:10px;font-weight:bold;font-family:宋体;}")
         return lbl
 

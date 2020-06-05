@@ -1,3 +1,9 @@
+'''
+author : RMDE
+function : connect the mysql
+'''
+
+
 import mysql.connector
 import re
 class mydb(object):

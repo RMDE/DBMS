@@ -1,5 +1,22 @@
+'''
+author : RMDE
+function : os function
+'''
+
 import sys
 from PyQt5.QtWidgets import QMessageBox
+from PyQt5 import QtGui
+import os
+import cv2
+
+# 加载图片路径
+def Load(img,w,h):
+    name = "Element\\"+img
+    img = cv2.imread(name)
+    RGBImg = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    image = QtGui.QImage(RGBImg,RGBImg.shape[1],RGBImg.shape[0],QtGui.QImage.Format_RGB888)
+    image = QtGui.QPixmap(image).scaled(w,h)
+    return image
 
 # 错误信息
 def Error(win,text):
@@ -24,3 +41,5 @@ def Warn(win,text):
         return True
     else:
         return False
+if __name__=='__main__':
+    Load("Icon.jpg")
