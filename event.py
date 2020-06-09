@@ -21,6 +21,7 @@ def Load(img,w,h):
 # 错误信息
 def Error(win,text):
     QMessageBox.critical(win,"错误",text)
+    return True;
 
 # 选择信息
 def Question(win,text):
@@ -33,6 +34,7 @@ def Question(win,text):
 # 提示信息
 def Info(win,text):
     QMessageBox.information(win,"提示",text)
+    return True;
 
 # 警告信息
 def Warn(win,text):

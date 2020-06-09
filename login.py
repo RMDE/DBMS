@@ -1,12 +1,14 @@
 from gui import *
 from db_manager import *
 from event import *
+from register import *
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
         QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit)
 from PyQt5.QtGui import QFont,QIcon,QPixmap,QPalette,QColor
 from PyQt5.QtCore import QCoreApplication,Qt
+import re
 import os
 
 name = None
@@ -33,7 +35,20 @@ def login(gui):
     line2 = gui.Input(150,190,"密码",50,350)
     line2.setEchoMode(QLineEdit.Password)
     btn = gui.Button('登录',100,270,show_login_status,50,400,"white","#6DDF6D",30)
+    btn1 = gui.Button('没有账号？注册一个',400,340,register,50,200,"black",None,15)
     gui.show()
+
+# 跳转界面
+def jump():
+    global name
+    if re.match(name,"S"):
+        pass
+    elif re.match(name,"T"):
+        pass
+    elif re.match(name,"W"):
+        pass
+    elif re.match(name,"M"):
+        pass
 
 # 显示登录成功状态
 def show_login_status():
@@ -42,18 +57,19 @@ def show_login_status():
     passwd = line2.text()
     if name=="" or passwd=="":
         Info(gui,"用户名或密码不能为空")
-    #else:
-    #    res,flag = mysql.get_passwd(name)
-    #    if flag==True and res!=[]:
-    #        res = res[0][0]
-    #        if passwd == res:
-    #            Info(gui,"登录成功")
-    #        else:
-    #            Error(gui,"密码错误")
-    #    elif flag==True and res==[]:
-    #        Error(gui,"用户名不存在")
-    #    else:
-    #        Error(gui,"数据库操作错误")
+    else:
+        res,flag = mysql.get_passwd(name)
+        if flag==True and res!=[]:
+            res = res[0][0]
+            if passwd == res:
+                Info(gui,"登录成功")
+                jump()
+            else:
+                Error(gui,"密码错误")
+        elif flag==True and res==[]:
+            Error(gui,"用户名不存在")
+        else:
+            Error(gui,"数据库操作错误")
 
 
 if __name__=='__main__':

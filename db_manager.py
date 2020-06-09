@@ -6,6 +6,9 @@ function : connect the mysql
 
 import mysql.connector
 import re
+
+college = ["航空宇航学院","能源与动力学院","自动化学院","电子信息工程学院","机电学院","材料科学与技术学院","民航学院","理学院","经济管理学院","人文与社会科学学院","艺术学院","外国语学院","马克思主义学院","航天学院","国际教育学院","计算机科学与技术学院"]
+
 class mydb(object):
 
     # 连接本地数据库并进行初始化
@@ -391,7 +394,7 @@ class mydb(object):
             self.database.commit()
             flag = True
         except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
+            room = "insert fails!{}".format(e)
             self.database.rollback()
             flag = False
         self.cursor.close()
@@ -439,12 +442,13 @@ class mydb(object):
             self.cursor.execute(a,b)
             self.database.commit()
             flag = True
+            res = None
         except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
+            res = "insert fails!{}".format(e)
             self.database.rollback()
             flag = False
         self.cursor.close()
-        return flag
+        return res,flag
     
     # 创建新的工作人员
     def create_worker(self,ID,name,password,sex= None,phone=None,birthday=None):
@@ -455,12 +459,13 @@ class mydb(object):
             self.cursor.execute(a,b)
             self.database.commit()
             flag = True
+            res = None
         except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
+            res = "insert fails!{}".format(e)
             self.database.rollback()
             flag = False
         self.cursor.close()
-        return flag
+        return res,flag
 
     # 创建新的教师
     def create_teacher(self,ID,name,password,sex=None,email=None,phone=None,college=None,birthday=None):
@@ -471,12 +476,13 @@ class mydb(object):
             res = self.cursor.execute(config,args)
             self.database.commit()
             flag = True
+            res = None
         except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
+            res = "insert fails!{}".format(e)
             self.database.rollback()
             flag = False
         self.cursor.close()
-        return flag
+        return res,flag
 
     # 查询个人信息
     def show_info(self,ID):

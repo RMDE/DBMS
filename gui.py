@@ -6,13 +6,23 @@ function : gui tools
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
-        QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit)
+        QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit,QRadioButton,QComboBox)
 from PyQt5.QtGui import QFont,QIcon
-from PyQt5.QtCore import QCoreApplication,Qt
+from PyQt5.QtCore import QCoreApplication,Qt,QRect
 
 class Gui(QWidget):
     def __init__(self):
         super().__init__()
+    
+    # 创建下拉框
+    def Combo(self,num,x,y,h,w,text):
+        combo = QComboBox(self)
+        combo.setGeometry(QRect(x,y,w,h))
+        #combo.setStyleSheet("QComboBox{border:gray;background:white;font-size:20;}")
+        for i in range(num):
+            combo.addItem(text[i])
+        return combo
+
 
     # 创建标签
     def Label(self,txt,x,y,h=None,w=None,font="black",size=20):
