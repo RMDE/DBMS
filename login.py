@@ -1,7 +1,7 @@
 from gui import *
 from db_manager import *
 from event import *
-from register import *
+import register
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
@@ -10,6 +10,7 @@ from PyQt5.QtGui import QFont,QIcon,QPixmap,QPalette,QColor
 from PyQt5.QtCore import QCoreApplication,Qt
 import re
 import os
+from time import sleep
 
 name = None
 passwd = None
@@ -17,8 +18,10 @@ line1 = None
 line2 = None
 
 # 显示登陆界面    
-def login(gui):
-    global name,passwd,line1,line2
+def login(log,sql):
+    global name,passwd,line1,line2,gui,mysql
+    gui = log
+    mysql = sql
     gui.resize(600,400) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('信息管理系统') # 窗口标题
@@ -35,8 +38,15 @@ def login(gui):
     line2 = gui.Input(150,190,"密码",50,350)
     line2.setEchoMode(QLineEdit.Password)
     btn = gui.Button('登录',100,270,show_login_status,50,400,"white","#6DDF6D",30)
-    btn1 = gui.Button('没有账号？注册一个',400,340,register,50,200,"black",None,15)
+    btn1 = gui.Button('没有账号？注册一个',400,340,jump2reg,50,200,"black",None,15)
     gui.show()
+
+# 跳转到注册窗口
+def jump2reg():
+    sleep(1)
+    reg = Gui()
+    register.register(reg,mysql)
+    gui.close()
 
 # 跳转界面
 def jump():
@@ -75,8 +85,8 @@ def show_login_status():
 if __name__=='__main__':
     global mysql,gui
     app = QApplication(sys.argv)
-    #mysql = mydb("localhost","root","123456")
-    #mysql.init_data()
+    mysql = mydb("localhost","root","123456")
+    mysql.init_data()
     gui = Gui()
-    login(gui)
+    login(gui,mysql)
     sys.exit(app.exec_())

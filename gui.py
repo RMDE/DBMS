@@ -73,12 +73,14 @@ class Gui(QWidget):
 
     # 退出确认
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, 'Message',"Are you sure to quit?", 
+        '''reply = QMessageBox.question(self, 'Message',"Are you sure to quit?", 
                 QMessageBox.Yes |QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             event.accept()
         else:
-            event.ignore()
+            event.ignore()'''
+        event.accept()
+
 
 if __name__=='__main__':
     app = QApplication(sys.argv)

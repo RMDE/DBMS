@@ -9,10 +9,12 @@ from PyQt5.QtGui import QFont,QIcon,QPixmap,QPalette,QColor
 from PyQt5.QtCore import QCoreApplication,Qt
 import os
 from login import *
+from time import sleep
 
 # 管理人员注册界面
-def register_manager(gui):
-    global line1,line2,sex,line3,line4,line5,line6,line7,line8
+def register_manager(reg):
+    global gui,line1,line2,sex,line3,line4,line5,line6,line7,line8
+    gui = reg
     gui.resize(700,900) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('注册') # 窗口标题
@@ -54,8 +56,9 @@ def register_manager(gui):
     gui.show()
 
 # 工作人员注册界面
-def register_worker(gui):
-    global line1,line2,sex,line3,line4,line5,line6,line7
+def register_worker(reg):
+    global gui,line1,line2,sex,line3,line4,line5,line6,line7
+    gui = reg
     gui.resize(700,800) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('注册') # 窗口标题
@@ -95,8 +98,9 @@ def register_worker(gui):
     gui.show()
 
 # 教师注册界面    
-def register_teacher(gui):
-    global line1,line2,sex,line3,line4,line5,line6,line7,line8,line9
+def register_teacher(reg):
+    global gui,line1,line2,sex,line3,line4,line5,line6,line7,line8,line9
+    gui = reg
     gui.resize(700,1000) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('注册') # 窗口标题
@@ -140,8 +144,9 @@ def register_teacher(gui):
     gui.show()
 
 # 学生注册界面
-def register_student(gui):
-    global line1,line2,sex,line3,line4,line5,line6,line7,line8,line9,line10
+def register_student(reg):
+    global gui,line1,line2,sex,line3,line4,line5,line6,line7,line8,line9,line10
+    gui = reg
     gui.resize(700,1000) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('注册') # 窗口标题
@@ -222,11 +227,12 @@ def show_regS_status():
     if args[8]!=args[9]:
         Info(gui,"两次输入的密码不一致，请重新输入。")
         return
-    #room,flag = mysql.create_student(args[0],args[1],args[3],args[4],args[5],args[8],args[2],args[6],args[7])
-    #if flag==True:
-    #    Info(gui,"注册成功,你的房间号为: {}".format(room))
-    #else:
-    #    Error(gui,"数据库操作错误: {}".format(room))
+    room,flag = mysql.create_student(args[0],args[1],args[3],args[4],args[5],args[8],args[2],args[6],args[7])
+    if flag==True:
+        Info(gui,"注册成功,你的房间号为: {}".format(room))
+        return_login()
+    else:
+        Error(gui,"数据库操作错误: {}".format(room))
 
 # 显示教师注册成功状态
 def show_regT_status():
@@ -258,6 +264,7 @@ def show_regT_status():
     res,flag = mysql.create_teacher(args[0],args[1],args[7],args[2],args[3],args[4],args[5],args[6])
     if flag==True:
         Info(gui,"注册成功")
+        return_login()
     else:
         Error(gui,"数据库操作错误: {}".format(res))
 
@@ -286,6 +293,7 @@ def show_regW_status():
     res,flag = mysql.create_worker(args[0],args[1],args[5],args[2],args[3],args[4])
     if flag==True:
         Info(gui,"注册成功")
+        return_login()
     else:
         Error(gui,"数据库操作错误: {}".format(res))
 
@@ -315,68 +323,111 @@ def show_regM_status():
     res,flag = mysql.create_manager(args[0],args[1],args[6],args[2],args[3],args[4],args[5])
     if flag==True:
         Info(gui,"注册成功")
+        return_login()
     else:
         Error(gui,"数据库操作错误: {}".format(res))
 
 # 返回到登录界面
 def return_login():
     '''
-    无需再建窗口，刷新窗口
+    再建窗口
     '''
-    pass
+    sleep(1)
+    log = Gui()
+    gui.close()
+    login(log,mysql)
 
 # 注册进入界面
-def register(gui):
-    '''
-    刷新窗口,或重建窗口
-    '''
-    global code
+def register(reg,sql):
+    global code,gui,mysql
+    gui = reg
+    mysql = sql
+
     gui.resize(600,400) # 窗口大小
     gui.center() # 窗口位置
     gui.setWindowTitle('注册') # 窗口标题
     gui.setWindowOpacity(0.97)
     lbl = gui.Label("角色",250,30,70,100,"#6DDF6D",50)
     lbl.setAutoFillBackground(False)
-    btn1 = gui.Button('学生',125,100,input_code,50,350,"white","#6DDF6D",30)
-    btn2 = gui.Button('教师',125,170,input_code,50,350,"white","#6DDF6D",30)
-    btn3 = gui.Button('工作人员',125,240,input_code,50,350,"white","#6DDF6D",30)
-    btn4 = gui.Button('管理人员',125,310,input_code,50,350,"white","#6DDF6D",30)
+    btn1 = gui.Button('学生',125,100,input_codeS,50,350,"white","#6DDF6D",30)
+    btn2 = gui.Button('教师',125,170,input_codeT,50,350,"white","#6DDF6D",30)
+    btn3 = gui.Button('工作人员',125,240,input_codeW,50,350,"white","#6DDF6D",30)
+    btn4 = gui.Button('管理人员',125,310,input_codeM,50,350,"white","#6DDF6D",30)
+    btn = gui.Button('< 返回',10,10,return_login,30,60,"black",None,20)
     gui.show()
+
+# 学生输入注册码
+def input_codeS():
+    global character
+    character = "S"
+    input_code()
+
+# 教师输入注册码
+def input_codeT():
+    global character
+    character = "T"
+    input_code()
+
+# 工作人员输入注册码
+def input_codeW():
+    global character
+    character = "W"
+    input_code()
+
+
+# 管理员输入注册码
+def input_codeM():
+    global character
+    character = "M"
+    input_code()
 
 # 注册码输入界面
 def input_code():
-    global code,character
+    global line1,newCode
     '''
     创建新的窗口
     '''
-    gui.resize(600,300) # 窗口大小
-    gui.center() # 窗口位置
-    gui.setWindowTitle('邀请码输入') # 窗口标题
-    gui.setWindowOpacity(0.97)
-    lbl = gui.Label("邀请码",250,30,70,100,"#6DDF6D",50)
+    newCode = Gui()
+    newCode.resize(600,300) # 窗口大小
+    newCode.center() # 窗口位置
+    newCode.setWindowTitle('邀请码输入') # 窗口标题
+    newCode.setWindowOpacity(0.97)
+    lbl = newCode.Label("邀请码",200,30,70,200,"#6DDF6D",50)
     lbl.setAutoFillBackground(False)
-    line1 = gui.Input(125,120,"注册邀请码",50,350)
-    btn1 = gui.Button('确定',400,240,dump_code,50,100,"white","#6DDF6D",30)
-    btn2 = gui.Button('取消',100,240,cancel,50,100,"white","#6DDF6D",30)
-    gui.show()
+    line1 = newCode.Input(125,120,"注册邀请码",50,350)
+    btn1 = newCode.Button('确定',400,240,dump_code,50,100,"white","#6DDF6D",30)
+    btn2 = newCode.Button('取消',100,240,cancel,50,100,"white","#6DDF6D",30)
+    newCode.show()
 
 # 取消该窗口
 def cancel():
     '''
     关闭邀请码界面
     '''
-    pass
+    newCode.close()
 
 # 查看邀请码是否正确
 def dump_code():
-    global code
-    if code=="#1%2&3$4*5_6":
+    global line1,character
+    code = line1.text()
+    if code=="123":
         '''
         新建窗口并运行对应的register
         '''
-        pass
+        sleep(1)
+        reg = Gui()
+        gui.close()
+        newCode.close()
+        if character=="S":
+            register_student(reg)
+        elif character=="T":
+            register_teacher(reg)
+        elif character=="W":
+            register_worker(reg)
+        else:
+            register_manager(reg)
     else:
-        Info("邀请码错误！")
+        Info(newCode,"邀请码错误！")
 
 if __name__=='__main__':
     global mysql,gui
@@ -384,5 +435,6 @@ if __name__=='__main__':
     #mysql.init_data()
     app = QApplication(sys.argv)
     gui = Gui()
-    register(gui)
+    register_student(gui,mysql)
+    #input_code()
     sys.exit(app.exec_())
