@@ -11,6 +11,7 @@ from PyQt5.QtCore import QCoreApplication,Qt
 import re
 import os
 from time import sleep
+from student import student
 
 name = None
 passwd = None
@@ -51,14 +52,16 @@ def jump2reg():
 # 跳转界面
 def jump():
     global name
-    if re.match(name,"S"):
+    reg = Gui()
+    if re.match("S",name):
+        student(reg,mysql,name)
+    elif re.match("T",name):
         pass
-    elif re.match(name,"T"):
+    elif re.match("W",name):
         pass
-    elif re.match(name,"W"):
+    elif re.match("M",name):
         pass
-    elif re.match(name,"M"):
-        pass
+    gui.close()
 
 # 显示登录成功状态
 def show_login_status():
