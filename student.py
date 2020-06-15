@@ -19,7 +19,7 @@ line2 = None
 
 # 显示学生用户界面    
 def student(log,sql,ID):
-    global name,gui,mysql
+    global name,gui,mysql,date
     gui = log
     mysql = sql
     name = ID
@@ -38,6 +38,7 @@ def student(log,sql,ID):
     character1 = gui.Label("学生",1450,55,60,100,"white",30)
     character2 = gui.Label(name,1800,60,50,100,"white",25)
     character3 = gui.Label("",1700,60,50,50,"white",30)
+    character3.setScaledContents(True)
     character3.setPixmap(Load("student.jpg",character3.width(),character3.height()))
     character3.setStyleSheet("QLabel{border-radius:25px;}")
 
@@ -47,8 +48,8 @@ def student(log,sql,ID):
     btn1 = gui.Button('个人信息',0,200,show_info,60,400,"gray","white",26);
     btn2 = gui.Button('个人课表',0,260,show_course,60,400,"gray","white",26);
     btn3 = gui.Button('考试安排',0,320,show_exam,60,400,"gray","white",26);
-    btn4 = gui.Button('成绩查询',0,380,show_grage,60,400,"gray","white",26);
-    btn5 = gui.Button('课程搜索',0,440,search_course,60,400,"gray","white",26);
+    btn4 = gui.Button('成绩查询',0,380,show_grade,60,400,"gray","white",26);
+    btn5 = gui.Button('选修课程',0,440,search_course,60,400,"gray","white",26);
     btn6 = gui.Button('教师查询',0,500,search_teacher,60,400,"gray","white",26);
     btn7 = gui.Button('借阅书籍',0,560,borrow_book,60,400,"gray","white",26);
     btn8 = gui.Button('缴纳电费',0,620,charge,60,400,"gray","white",26);
@@ -57,6 +58,12 @@ def student(log,sql,ID):
     lbl = gui.Label(">>>校历",500,250,50,100,"black",25)
     lbl1 = gui.Label("",500,300,2,1420)
     lbl1.setStyleSheet("QLabel{background:gray;}")
+    cal = gui.Calendar(600,400,400,800)
+    time = gui.Timer(550,850)
+    Emot = gui.Label("",1500,700,300,300)
+    character3.setScaledContents(True)
+    Emot.setPixmap(Load("Emot1.jpg",Emot.width(),Emot.height()))
+
     gui.show()
 
 def show_info():

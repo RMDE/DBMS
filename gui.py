@@ -6,12 +6,13 @@ function : gui tools
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
-        QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit,QRadioButton,QComboBox)
+        QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit,QRadioButton,QComboBox,QCalendarWidget)
 from PyQt5.QtGui import QFont,QIcon
-from PyQt5.QtCore import QCoreApplication,Qt,QRect
+from PyQt5.QtCore import QCoreApplication,Qt,QRect,QDate,QDateTime,QTimer
 
 class Gui(QWidget):
     def __init__(self):
+        self.time = None
         super().__init__()
     
     # 创建下拉框
@@ -79,7 +80,34 @@ class Gui(QWidget):
             event.accept()
         else:
             event.ignore()'''
+        if self.time!=None:
+            self.time.stop()
         event.accept()
+
+    # 日历
+    def Calendar(self,x,y,h,w):
+        cal = QCalendarWidget(self)
+        cal.setMinimumDate(QDate(1988,1,1))
+        cal.setMaximumDate(QDate(2088,1,1))
+        cal.setGridVisible(True)
+        cal.move(x,y)
+        cal.resize(w,h)
+        return cal
+
+    # 时间显示器
+    def Timer(self,x,y):
+    	self.lbl = self.Label("",x,y,50,500,25)
+    	self.time = QTimer()
+    	self.time.timeout.connect(self.show_time)
+    	self.time.start(1000)
+    	return self.lbl
+
+    # 动态编辑时间
+    def show_time(self):
+    	time = QDateTime.currentDateTime()
+    	timeDisplay = time.toString("yyyy-MM-dd dddd hh:mm:ss ")
+    	self.lbl.setText("当前时间"+timeDisplay)
+
 
 
 if __name__=='__main__':
