@@ -67,7 +67,7 @@ class Gui(QWidget):
         size = str(size)+"px"
         btn.setStyleSheet('''
             QPushButton{color:%s;background:%s;border-radius:5px;font-size:%s;}
-            QPushButton:hover{background:gray;}'''%(font,back,size))
+            QPushButton:hover{background:#DFDFDF;}'''%(font,back,size))
         btn.clicked.connect(event)
         return btn
 
