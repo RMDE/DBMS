@@ -138,7 +138,11 @@ def show_course():
                     courses[x].setText(res[i][1])
                     courses[x].setStyleSheet("QLabel{background:#FFADAD;color:white;font-size:25px;font-family:宋体;font-weight:bold;}")
         title = ["课程编号","课程名称","授课老师","学分","课程类别","考试形式"]
-        table = gui.Table(500,700,len(res)*30,1380,len(res),6,title)
+        if 60+len(res)*40 > 300:
+            height = 300
+        else:
+            height = 60+len(res)*40
+        table = gui.Table(500,700,height,1380,len(res),6,title)
         for i in range(len(res)):
             for j in range(5):
                 table.setItem(i,j,QTableWidgetItem(str(res[i][j])))
@@ -164,7 +168,24 @@ def show_exam():
     show_frame(gui)
     btn3 = gui.Button('考试安排',0,320,show_exam,60,400,"gray","#DFDFDF",26);
     btn3.setEnabled(False)
-    pass
+    [res,flag] = mysql.show_test(name)
+    if flag==False:
+        Error(gui,res)
+    else:
+        if res==[]:
+            lbl = gui.Label("你最近未安排任何考试.",500,300,40,400,size=30)
+        else:
+            if 60+len(res)*40 > 600:
+                height = 600
+            else:
+                height = 60+len(res)*40
+            title = ["课程编号","课程名称","考试形式","考试时间","考试地点"]
+            table = gui.Table(500,300,height,1380,len(res),5,title)
+            for i in range(len(res)):
+                for j in range(5):
+                    table.setItem(i,j,QTableWidgetItem(str(res[i][j])))
+    Emot = gui.Label("",1500,700,300,300)
+    Emot.setPixmap(Load("Emot8.jpg",Emot.width(),Emot.height()))
 
     gui.show()
 
@@ -175,8 +196,26 @@ def show_grade():
     show_frame(gui)
     btn4 = gui.Button('成绩查询',0,380,show_grade,60,400,"gray","#DFDFDF",26);
     btn4.setEnabled(False)
-    pass
-
+    [res,avg,flag] = mysql.show_grade(name)
+    if flag==False:
+        Error(gui,res)
+    else:
+        if res==[]:
+            lbl = gui.Label("你还没有任何成绩哦.",500,300,40,400,size=30)
+            lbl = gui.Label("平均绩点: "+str(0.0),1600,250,80,250,size=30)
+        else:
+            lbl = gui.Label("平均绩点: "+str(int(avg[0][0])/20),1600,250,80,250,size=30)
+            if 60+len(res)*40 > 500:
+                height = 500
+            else:
+                height = 60+len(res)*40
+            title = ["课程名称","学分","考试成绩"]
+            table = gui.Table(500,350,height,1380,len(res),3,title)
+            for i in range(len(res)):
+                for j in range(3):
+                    table.setItem(i,j,QTableWidgetItem(str(res[i][j])))
+    Emot = gui.Label("",1500,700,300,300)
+    Emot.setPixmap(Load("Emot9.jpg",Emot.width(),Emot.height()))
     gui.show()
 
 # 选课

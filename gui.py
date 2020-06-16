@@ -118,6 +118,9 @@ class Gui(QWidget):
         table.horizontalHeader().setVisible(True)
         table.verticalHeader().setVisible(True)
         table.setEditTriggers(QTableWidget.NoEditTriggers)
+        table.horizontalHeader().setStretchLastSection(True)
+        table.horizontalHeader().setDefaultSectionSize(w/col)
+        table.verticalHeader().setStretchLastSection(True)
         table.setFrameShape(QFrame.NoFrame)
         if title==None:
             title = [str(x+1) for x in range(col)]

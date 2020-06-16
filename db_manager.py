@@ -344,10 +344,10 @@ class mydb(object):
         self.cursor.execute(config,("C0006","英语","必修",1.5,"T120001","Wed-16:15~18:00","考试"))
         self.cursor.execute(config,("C0007","操作系统","必修",3.5,"T160002","Mon-14:00~15:45,Wed-8:00~9:45","考试"))
         self.cursor.execute(config,("C0008","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
-        self.cursor.execute('''update course set exam_date="2020-6-7 8:00:00" where id="3"''')
-        self.cursor.execute('''update course set exam_room="2201" where id="3"''')
-        self.cursor.execute('''update course set exam_date="2020-5-25 8:00:00" where id="1"''')
-        self.cursor.execute('''update course set exam_room="2301" where id="1"''')
+        self.cursor.execute('''update course set exam_date="2020-6-7 8:00:00" where id="C0003"''')
+        self.cursor.execute('''update course set exam_room="2201" where id="C0003"''')
+        self.cursor.execute('''update course set exam_date="2020-5-25 8:00:00" where id="C0001"''')
+        self.cursor.execute('''update course set exam_room="2301" where id="C0001"''')
         config = '''insert into choose(student,course,time) values(%s,%s,%s)'''
         self.cursor.execute(config,("S1620101","C0001","2020-1-10 9:23:45"))
         self.cursor.execute(config,("S1620101","C0002","2020-1-12 15:02:12"))
@@ -356,7 +356,7 @@ class mydb(object):
         self.cursor.execute(config,("S1620101","C0005","2020-1-10 10:38:22"))
         self.cursor.execute(config,("S1620101","C0006","2020-2-9 12:21:05"))
         self.cursor.execute(config,("S1620101","C0007","2020-2-9 12:21:24"))
-        self.cursor.execute('''update choose set score=100 where course="1" and student="S1620101"''')
+        self.cursor.execute('''update choose set score=100 where course="C0001" and student="S1620101"''')
         config = '''insert into book(id,name,author,type,year,sum,avaible) values(%s,%s,%s,%s,%s,%s,%s)'''
         self.cursor.execute(config,("B000001","高等数学","王五","8",2017,8,6))
         self.cursor.execute(config,("B000002","线性代数","张三","8",2017,5,4))
@@ -576,8 +576,7 @@ class mydb(object):
             res = self.cursor.fetchall()
             flag = True
         except mysql.connector.Error as e:
-            print("select fails! {}".format(e))
-            res = None
+            res = "select fails! {}".format(e)
             flag = False
         self.cursor.close()
         return res,flag
@@ -614,8 +613,7 @@ class mydb(object):
             res1 = self.cursor.fetchall()
             flag = True
         except mysql.connector.Error as e:
-            print("select fails! {}".format(e))
-            res = None
+            res = "select fails! {}".format(e)
             res1 = None
             flag = False
         self.cursor.close()
