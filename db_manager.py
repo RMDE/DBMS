@@ -8,6 +8,7 @@ import mysql.connector
 import re
 
 college = ["航空宇航学院","能源与动力学院","自动化学院","电子信息工程学院","机电学院","材料科学与技术学院","民航学院","理学院","经济管理学院","人文与社会科学学院","艺术学院","外国语学院","马克思主义学院","航天学院","国际教育学院","计算机科学与技术学院"]
+schedule =["Mon-8:00~9:45","Mon-10:15~12:00","Mon-14:00~15:45","Mon-16:15~18:00","Tue-8:00~9:45","Tue-10:15~12:00","Tue-14:00~15:45","Tue-16:15~18:00","Wed-8:00~9:45","Wed-10:15~12:00","Wed-14:00~15:45","Wed-16:15~18:00","Thu-8:00~9:45","Thu-10:15~12:00","Thu-14:00~15:45","Thu-16:15~18:00","Fri-8:00~9:45","Fri-10:15~12:00","Fri-14:00~15:45","Fri-16:15~18:00"]
 
 class mydb(object):
 
@@ -335,44 +336,44 @@ class mydb(object):
         config = '''update class set monitor="S1620101" where id="16201"'''
         self.cursor.execute(config)
         config = '''insert into course(id,name,type,credit,teacher,schedule,exam_type) values(%s,%s,%s,%s,%s,%s,%s)'''
-        self.cursor.execute(config,("1","高等数学","必修",5.5,"T080001","Mon-10:15~12:00,Wed-10:15~12:00,Fri-8:00~9:45","考试"))
-        self.cursor.execute(config,("2","网络安全","必修",2,"T160001","Tue-8:00~9:45,Fri-8:00~9:45","考试"))
-        self.cursor.execute(config,("3","嵌入式","专业选修",2,"T160002","Thu-10:15~12:00","考查"))
-        self.cursor.execute(config,("4","美术鉴赏","文化素质",1.5,"T110001","Fri-14:00~15:45","考查"))
-        self.cursor.execute(config,("5","操作系统实践","实践拓展",2.5,"T160001","Tue-8:00~9:45,Thu-8:00~9:45","考查"))
-        self.cursor.execute(config,("6","英语","必修",1.5,"T120001","Wed-16:15~18:00","考试"))
-        self.cursor.execute(config,("7","操作系统","必修",3.5,"T160002","Mon-14:00~15:45,Wed-8:00~9:45","考试"))
-        self.cursor.execute(config,("8","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
+        self.cursor.execute(config,("C0001","高等数学","必修",5.5,"T080001","Mon-10:15~12:00,Wed-10:15~12:00,Fri-8:00~9:45","考试"))
+        self.cursor.execute(config,("C0002","网络安全","必修",2,"T160001","Tue-8:00~9:45,Fri-8:00~9:45","考试"))
+        self.cursor.execute(config,("C0003","嵌入式","专业选修",2,"T160002","Thu-10:15~12:00","考查"))
+        self.cursor.execute(config,("C0004","美术鉴赏","文化素质",1.5,"T110001","Fri-14:00~15:45","考查"))
+        self.cursor.execute(config,("C0005","操作系统实践","实践拓展",2.5,"T160001","Tue-8:00~9:45,Thu-8:00~9:45","考查"))
+        self.cursor.execute(config,("C0006","英语","必修",1.5,"T120001","Wed-16:15~18:00","考试"))
+        self.cursor.execute(config,("C0007","操作系统","必修",3.5,"T160002","Mon-14:00~15:45,Wed-8:00~9:45","考试"))
+        self.cursor.execute(config,("C0008","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
         self.cursor.execute('''update course set exam_date="2020-6-7 8:00:00" where id="3"''')
         self.cursor.execute('''update course set exam_room="2201" where id="3"''')
         self.cursor.execute('''update course set exam_date="2020-5-25 8:00:00" where id="1"''')
         self.cursor.execute('''update course set exam_room="2301" where id="1"''')
         config = '''insert into choose(student,course,time) values(%s,%s,%s)'''
-        self.cursor.execute(config,("S1620101","1","2020-1-10 9:23:45"))
-        self.cursor.execute(config,("S1620101","2","2020-1-12 15:02:12"))
-        self.cursor.execute(config,("S1620101","3","2020-1-10 9:24:07"))
-        self.cursor.execute(config,("S1620101","4","2020-1-10 9:24:29"))
-        self.cursor.execute(config,("S1620101","5","2020-1-10 10:38:22"))
-        self.cursor.execute(config,("S1620101","6","2020-2-9 12:21:05"))
-        self.cursor.execute(config,("S1620101","7","2020-2-9 12:21:24"))
+        self.cursor.execute(config,("S1620101","C0001","2020-1-10 9:23:45"))
+        self.cursor.execute(config,("S1620101","C0002","2020-1-12 15:02:12"))
+        self.cursor.execute(config,("S1620101","C0003","2020-1-10 9:24:07"))
+        self.cursor.execute(config,("S1620101","C0004","2020-1-10 9:24:29"))
+        self.cursor.execute(config,("S1620101","C0005","2020-1-10 10:38:22"))
+        self.cursor.execute(config,("S1620101","C0006","2020-2-9 12:21:05"))
+        self.cursor.execute(config,("S1620101","C0007","2020-2-9 12:21:24"))
         self.cursor.execute('''update choose set score=100 where course="1" and student="S1620101"''')
         config = '''insert into book(id,name,author,type,year,sum,avaible) values(%s,%s,%s,%s,%s,%s,%s)'''
-        self.cursor.execute(config,("1","高等数学","王五","8",2017,8,6))
-        self.cursor.execute(config,("2","线性代数","张三","8",2017,5,4))
-        self.cursor.execute(config,("3","数据结构","刘德峰","16",2016,12,10))
-        self.cursor.execute(config,("4","操作系统","周赋好","16",2018,8,6))
-        self.cursor.execute(config,("5","嵌入式","张梁","16",2019,6,5))
-        self.cursor.execute(config,("6","世界图鉴","孙可望","11",2020,1,0))
+        self.cursor.execute(config,("B000001","高等数学","王五","8",2017,8,6))
+        self.cursor.execute(config,("B000002","线性代数","张三","8",2017,5,4))
+        self.cursor.execute(config,("B000003","数据结构","刘德峰","16",2016,12,10))
+        self.cursor.execute(config,("B000004","操作系统","周赋好","16",2018,8,6))
+        self.cursor.execute(config,("B000005","嵌入式","张梁","16",2019,6,5))
+        self.cursor.execute(config,("B000006","世界图鉴","孙可望","11",2020,1,0))
         config = '''insert into borrow(book,person,time,deadline) values(%s,%s,%s,%s)'''
-        self.cursor.execute(config,("1","T080001","2020-4-1","2020-8-1"))
-        self.cursor.execute(config,("2","T080001","2020-4-1","2020-8-1"))
-        self.cursor.execute(config,("1","S1620101","2020-3-14","2020-5-14"))
-        self.cursor.execute(config,("3","T160003","2020-3-16","2020-7-16"))
-        self.cursor.execute(config,("3","S1620101","2020-5-14","2020-7-14"))
-        self.cursor.execute(config,("4","T160002","2020-2-29","2020-6-29"))
-        self.cursor.execute(config,("4","S1620101","2020-5-14","2020-7-14"))
-        self.cursor.execute(config,("5","T160002","2020-2-29","2020-6-29"))
-        self.cursor.execute(config,("6","T110001","2020-4-3","2020-8-3"))
+        self.cursor.execute(config,("B000001","T080001","2020-4-1","2020-8-1"))
+        self.cursor.execute(config,("B000002","T080001","2020-4-1","2020-8-1"))
+        self.cursor.execute(config,("B000001","S1620101","2020-3-14","2020-5-14"))
+        self.cursor.execute(config,("B000003","T160003","2020-3-16","2020-7-16"))
+        self.cursor.execute(config,("B000003","S1620101","2020-5-14","2020-7-14"))
+        self.cursor.execute(config,("B000004","T160002","2020-2-29","2020-6-29"))
+        self.cursor.execute(config,("B000004","S1620101","2020-5-14","2020-7-14"))
+        self.cursor.execute(config,("B000005","T160002","2020-2-29","2020-6-29"))
+        self.cursor.execute(config,("B000006","T110001","2020-4-3","2020-8-3"))
         self.database.commit()
         self.cursor.close()
 
@@ -495,8 +496,7 @@ class mydb(object):
                 res = self.cursor.fetchall()
                 flag = True
             except mysql.connector.Error as e:
-                print("select fails! {}".format(e))
-                res = None
+                res = "select fails! {}".format(e)
                 flag = False
         # 学生个人信息
         elif re.match("S",ID)!=None:
@@ -506,8 +506,7 @@ class mydb(object):
                 res = self.cursor.fetchall()
                 flag = True
             except mysql.connector.Error as e:
-                print("select fails! {}".format(e))
-                res = None
+                res = "select fails! {}".format(e)
                 flag = False
         # 工作人员信息
         elif re.match("W",ID)!=None:
@@ -517,8 +516,7 @@ class mydb(object):
                 res = self.cursor.fetchall()
                 flag = True
             except mysql.connector.Error as e:
-                print("select fails! {}".format(e))
-                res = None
+                res = "select fails! {}".format(e)
                 flag = False
         # 管理人员信息
         elif re.match("M",ID)!=None:
@@ -528,8 +526,7 @@ class mydb(object):
                 res = self.cursor.fetchall()
                 flag = True
             except mysql.connector.Error as e:
-                print("select fails! {}".format(e))
-                res = None
+                res = "select fails! {}".format(e)
                 flag = False
         self.cursor.close()
         return res,flag
@@ -545,8 +542,7 @@ class mydb(object):
             res = self.cursor.fetchall()
             flag = True
         except mysql.connector.Error as e:
-            print("select fails! {}".format(e))
-            res = None
+            res = "select fails! {}".format(e)
             flag = False
         self.cursor.close()
         return res,flag
@@ -911,20 +907,21 @@ class mydb(object):
         return flag
 
     # 更新学生信息
-    def update_student(self,ID,name,clas,profession,college,sex,phone,birthday):
+    def update_student(self,ID,name,sex,clas,profession,college,phone,birthday):
         self.cursor = self.database.cursor() # 当前游标
         config = '''update student set
             name={!r},sex={!r},class={!r},profession={!r},college={!r},phone={!r},birthday={!r} where id={!r}'''.format
         try:
             self.cursor.execute(config(name,sex,clas,profession,college,phone,birthday,ID))
             self.database.commit()
+            res = None
             flag = True
         except mysql.connector.Error as e:
-            print("update fails!{}".format(e))
+            res = "update fails!{}".format(e)
             self.database.rollback()
             flag = False
         self.cursor.close()
-        return flag
+        return res,flag
 
     # 更新工作人员信息
     def update_worker(self,ID,name,sex,phone,birthday,salary):
@@ -981,5 +978,31 @@ class mydb(object):
             flag = False
         self.cursor.close()
         return res,flag
+
+    # 获取名字
+    def get_name(self,ID):
+        self.cursor = self.database.cursor() # 当前游标
+        if re.match("T",ID):
+            table = "teacher"
+        elif re.match("W",ID):
+            table = "worker"
+        elif re.match("M",ID):
+            table = "manager"
+        elif re.match("S",ID):
+            table = "student"
+        else:
+            self.cursor.close()
+            return None,False
+        config = '''select name from {} where id={!r}'''.format(table,ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            res = "select fails! {}".format(e)
+            flag = False
+        self.cursor.close()
+        return res,flag
+
         
 

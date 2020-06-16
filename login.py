@@ -55,6 +55,7 @@ def jump():
     reg = Gui()
     if re.match("S",name):
         student(reg,mysql,name)
+        gui.close()
     elif re.match("T",name):
         pass
     elif re.match("W",name):
@@ -88,8 +89,9 @@ def show_login_status():
 if __name__=='__main__':
     global mysql,gui
     app = QApplication(sys.argv)
-    mysql = mydb("localhost","root","123456")
-    mysql.init_data()
+    mysql = None
+    #mysql = mydb("localhost","root","123456")
+    #mysql.init_data()
     gui = Gui()
     login(gui,mysql)
     sys.exit(app.exec_())

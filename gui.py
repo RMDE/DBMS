@@ -6,8 +6,8 @@ function : gui tools
 import sys
 from PyQt5.QtWidgets import (QWidget, QToolTip, QDesktopWidget, QMessageBox,
         QTextEdit,QLabel,QPushButton, QApplication,QMainWindow, QAction, qApp,
-        QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit,QRadioButton,QComboBox,QCalendarWidget)
-from PyQt5.QtGui import QFont,QIcon
+        QHBoxLayout, QVBoxLayout,QGridLayout,QLineEdit,QRadioButton,QComboBox,QCalendarWidget,QFrame,QTableWidget)
+from PyQt5.QtGui import QFont,QIcon,QBrush,QColor
 from PyQt5.QtCore import QCoreApplication,Qt,QRect,QDate,QDateTime,QTimer
 
 class Gui(QWidget):
@@ -26,7 +26,7 @@ class Gui(QWidget):
 
 
     # 创建标签
-    def Label(self,txt,x,y,h=None,w=None,font="black",size=20):
+    def Label(self,txt,x,y,h=None,w=None,font="black",size=20,back="none"):
         lbl = QLabel(self)
         if h==None:
             lbl.resize(lbl.sizeHint())
@@ -36,7 +36,7 @@ class Gui(QWidget):
         lbl.setText(txt)
         lbl.setAlignment(Qt.AlignCenter)
         size = str(size)+"px"
-        lbl.setStyleSheet("QLabel{border:none;background:none;font-size:%s;color:%s;font-weight:bold;font-family:宋体;}"%(size,font))
+        lbl.setStyleSheet("QLabel{border:none;background:%s;font-size:%s;color:%s;font-weight:bold;font-family:宋体;}"%(back,size,font))
         return lbl
 
     # 创建输入框
@@ -108,9 +108,28 @@ class Gui(QWidget):
     	timeDisplay = time.toString("yyyy-MM-dd dddd hh:mm:ss ")
     	self.lbl.setText("当前时间"+timeDisplay)
 
+    # 创建表格
+    def Table(self,x,y,h,w,row=4,col=3,title=None):
+        table = QTableWidget(self)
+        table.resize(w,h)
+        table.move(x,y)
+        table.setRowCount(row)
+        table.setColumnCount(col)
+        table.horizontalHeader().setVisible(True)
+        table.verticalHeader().setVisible(True)
+        table.setEditTriggers(QTableWidget.NoEditTriggers)
+        table.setFrameShape(QFrame.NoFrame)
+        if title==None:
+            title = [str(x+1) for x in range(col)]
+        no = [str(x+1) for x in range(row)]
+        table.setVerticalHeaderLabels(no)
+        table.setHorizontalHeaderLabels(title)
+        return table
 
 
 if __name__=='__main__':
     app = QApplication(sys.argv)
     ex = Gui()
+    ex.Table(1,1,100,200,4,3)
+    ex.show()
     sys.exit(app.exec_())
