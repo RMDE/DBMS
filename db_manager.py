@@ -344,6 +344,10 @@ class mydb(object):
         self.cursor.execute(config,("C0006","英语","必修",1.5,"T120001","Wed-16:15~18:00","考试"))
         self.cursor.execute(config,("C0007","操作系统","必修",3.5,"T160002","Mon-14:00~15:45,Wed-8:00~9:45","考试"))
         self.cursor.execute(config,("C0008","数据结构","必修",2,"T160003","Tue-16:15~18:00,Thu-16:15~18:00","考试"))
+        self.cursor.execute(config,("C0009","数据结构实验","必修",0.5,"T160004","Tue-16:15~18:00","考查"))
+        self.cursor.execute(config,("C0010","数据结构课设","必修",1,"T160004","","考查"))
+        self.cursor.execute(config,("C0011","网络安全实践","必修",2.5,"T160001","Tue-16:15~18:00,Wed-16:15~18:00","考查"))
+        self.cursor.execute(config,("C0012","离散数学","专业选修",3.5,"T160004","Mon-16:15~18:00,Wed-16:15~18:00","考试"))
         self.cursor.execute('''update course set exam_date="2020-6-7 8:00:00" where id="C0003"''')
         self.cursor.execute('''update course set exam_room="2201" where id="C0003"''')
         self.cursor.execute('''update course set exam_date="2020-5-25 8:00:00" where id="C0001"''')
@@ -671,13 +675,14 @@ class mydb(object):
         try:
             self.cursor.execute(config,(student,course))
             self.database.commit()
+            res = None
             flag = True
         except mysql.connector.Error as e:
-            print("insert fails!{}".format(e))
+            res = "insert fails!{}".format(e)
             self.database.rollback()
             flag = False
         self.cursor.close()
-        return flag
+        return res,flag
     
     # 更新借书记录
     def update_borrow(self,person,book):
@@ -992,6 +997,31 @@ class mydb(object):
             self.cursor.close()
             return None,False
         config = '''select name from {} where id={!r}'''.format(table,ID)
+        try:
+            self.cursor.execute(config)
+            res = self.cursor.fetchall()
+            flag = True
+        except mysql.connector.Error as e:
+            res = "select fails! {}".format(e)
+            flag = False
+        self.cursor.close()
+        return res,flag
+    
+    # 获取ID
+    def get_id(self,name,Type):
+        self.cursor = self.database.cursor() # 当前游标
+        if Type == "T":
+            table = "teacher"
+        elif Type == "W":
+            table = "worker"
+        elif Type == "M":
+            table = "manager"
+        elif Type == "S":
+            table = "student"
+        else:
+            self.cursor.close()
+            return None,False
+        config = '''select id from {} where name={!r}'''.format(table,name)
         try:
             self.cursor.execute(config)
             res = self.cursor.fetchall()
