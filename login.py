@@ -12,6 +12,9 @@ import re
 import os
 from time import sleep
 from student import student
+from teacher import teacher
+from manager import manager
+from worker import worker
 
 name = None
 passwd = None
@@ -57,11 +60,14 @@ def jump():
         student(reg,mysql,name)
         gui.close()
     elif re.match("T",name):
-        pass
+        teacher(reg,mysql,name)
+        gui.close()
     elif re.match("W",name):
-        pass
+        worker(reg,mysql,name)
+        gui.close()
     elif re.match("M",name):
-        pass
+        manager(reg,mysql,name)
+        gui.close()
     gui.close()
 
 # 显示登录成功状态
@@ -90,8 +96,7 @@ if __name__=='__main__':
     global mysql,gui
     app = QApplication(sys.argv)
     mysql = None
-    #mysql = mydb("localhost","root","123456")
-    #mysql.init_data()
+    mysql = mydb("localhost","root","123456")
     gui = Gui()
     login(gui,mysql)
     sys.exit(app.exec_())
