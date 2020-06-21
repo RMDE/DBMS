@@ -201,7 +201,7 @@ if __name__=='__main__':
     mysql = None
     app = QApplication(sys.argv)
     mysql = mydb("localhost","root","123456")
-    mysql.init_data()
+    #mysql.init_data()
     gui = Gui()
     ID = "W0001"
     name = ID

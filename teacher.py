@@ -34,7 +34,6 @@ def teacher(log,sql,ID):
     time = gui.Timer(550,850)
     gui.show()
 
-
 # 显示框架
 def show_frame(gui):
     global btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8
@@ -154,7 +153,6 @@ def show_course():
     l21 = gui.Label("",1520,290,400,2,back="#EFEFEF")
     l22 = gui.Label("",1700,290,400,2,back="#EFEFEF")
     gui.show()
-
 
 # 搜索课程
 def search_course():
@@ -426,8 +424,6 @@ def choose3():
     else:
         Error(gui,res)
 
-
-
 # 修改个人信息
 def update_info():
     global info,gui,mysql,line2,line8,line9,line10
@@ -450,13 +446,12 @@ def update_info():
     else:
         Error(gui,res)
 
-
 if __name__=='__main__':
     global mysql,gui,ID,name
     mysql = None
     app = QApplication(sys.argv)
     mysql = mydb("localhost","root","123456")
-    mysql.init_data()
+    #mysql.init_data()
     gui = Gui()
     ID = "T160002"
     name = ID
